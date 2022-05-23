@@ -1,0 +1,32 @@
+
+.home-container{
+    width: 60%;
+    margin: auto;
+}
+
+.home-container span,
+.home-container p{
+    transition: 200ms ease-out;
+}
+
+.home-container .nav-link {
+    transition: 200ms ease-out;
+}
+
+.home-container .nav-link:hover {
+    transform: translateY(-1.5px);
+    & span {
+        color: #13c1ac;
+    }
+    & p {
+        color: #13c1ac;
+    }
+}
+
+
+@media only screen and (max-width: 1300px) {
+    .home-container{
+        width: 90%;
+        margin: auto;
+    }
+}

@@ -1,0 +1,15 @@
+.filter-div:hover{
+    background-color: #13c1ac;
+    color: #FFF !important;
+    & .material-icons-outlined{
+        color: #FFF !important;
+    }
+}
+
+.active-filter-div{
+    background-color: #13c1ac;
+    color: #FFF !important;
+    & .material-icons-outlined{
+        color: #FFF !important;
+    }
+}

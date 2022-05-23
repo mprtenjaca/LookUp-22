@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,WAAW,AAAA,MAAM,CAAA;EACb,gBAAgB,EAAE,OAAO;EACzB,KAAK,EAAE,eAAe;CAIzB;;AAND,AAGI,WAHO,AAAA,MAAM,CAGX,wBAAwB,CAAA;EACtB,KAAK,EAAE,eAAe;CACzB;;AAGL,AAAA,kBAAkB,CAAA;EACd,gBAAgB,EAAE,OAAO;EACzB,KAAK,EAAE,eAAe;CAIzB;;AAND,AAGI,kBAHc,CAGZ,wBAAwB,CAAA;EACtB,KAAK,EAAE,eAAe;CACzB",
+    "sources": [
+        "customs.scss"
+    ],
+    "names": [],
+    "file": "customs.css"
+}

@@ -1,0 +1,161 @@
+html{
+  scroll-behavior: smooth !important;
+}
+.error {
+  margin: 4px;
+  color: #ff0000;
+}
+
+.dropdownSelect {
+  background-color: transparent;
+  border: 1px solid #adadad;
+  padding: 8px;
+  width: 100%;
+  border-radius: 30px;
+  color: #2c2c2c;
+  line-height: normal;
+  height: auto;
+  font-size: 14px;
+  transition: color 0.3s ease-in-out, border-color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
+}
+
+.center-custom h5 {
+  float: left;
+  margin: 8px;
+}
+.center-custom button {
+  margin: 5px;
+}
+
+.editor {
+  justify-content: space-between;
+  display: inline-grid;
+}
+
+.delete {
+  text-align: right;
+}
+
+.edit-company {
+  font-size: 25px;
+  color: red;
+  margin-top: 2px;
+  margin-left: 20px;
+}
+
+.details-section {
+  margin: 5px 0 15px 0;
+  background: #e3e3e3;
+  padding: 10px;
+  box-shadow: 0px 1px 3px -1px;
+}
+
+.details-section input,
+.details-section .dropdownSelect {
+  border-color: #b9b9b9;
+}
+
+.details-section textarea {
+  border: 1.5px solid #ced4da;
+}
+
+.details-section-row-x{
+  justify-content: end;
+}
+
+.details-section-x {
+  width: 40px;
+}
+
+.customDialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+@media only screen and (max-width: 500px) {
+  .customDialog {
+    width: 80%;
+  }
+}
+
+.modalBackground {
+  /* width: 100vw;
+    height: 100vh;
+    background-color: rgba(200, 200, 200);
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+}
+
+.modalContainer {
+  width: 500px;
+  height: 500px;
+  border-radius: 12px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+}
+
+.modalContainer .title {
+  display: inline-block;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.titleCloseBtn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.titleCloseBtn button {
+  background-color: transparent;
+  border: none;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.modalContainer .body {
+  flex: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.7rem;
+  text-align: center;
+}
+
+.modalContainer .footer {
+  flex: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContainer .footer button {
+  width: 150px;
+  height: 45px;
+  margin: 10px;
+  border: none;
+  background-color: cornflowerblue;
+  color: white;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#cancelBtn {
+  background-color: crimson;
+}

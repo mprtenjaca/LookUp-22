@@ -1,0 +1,19 @@
+.pdfHeader {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdfHeader h2 {
+  margin: auto 0;
+}
+
+.pdfDetails {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdfDetails .bold {
+    font-weight: bold;
+}

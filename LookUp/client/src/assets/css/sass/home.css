@@ -1,0 +1,36 @@
+.home-container {
+  width: 60%;
+  margin: auto;
+}
+
+.home-container span,
+.home-container p {
+  -webkit-transition: 200ms ease-out;
+  transition: 200ms ease-out;
+}
+
+.home-container .nav-link {
+  -webkit-transition: 200ms ease-out;
+  transition: 200ms ease-out;
+}
+
+.home-container .nav-link:hover {
+  -webkit-transform: translateY(-1.5px);
+          transform: translateY(-1.5px);
+}
+
+.home-container .nav-link:hover span {
+  color: #13c1ac;
+}
+
+.home-container .nav-link:hover p {
+  color: #13c1ac;
+}
+
+@media only screen and (max-width: 1300px) {
+  .home-container {
+    width: 90%;
+    margin: auto;
+  }
+}
+/*# sourceMappingURL=home.css.map */

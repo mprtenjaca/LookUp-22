@@ -1,0 +1,115 @@
+/* Profile Edit */
+body {
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+}
+
+.edit_profile{
+    font-family: 'Georama', sans-serif;
+    position: fixed;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #0008;
+    z-index: 9;
+    overflow: auto;
+}
+.edit_profile form{
+    max-width: 600px;
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px auto;
+}
+
+.edit_profile label {
+    color: #607d8b;
+}
+
+.edit_profile form input:focus, .container form select:focus, textarea:focus{
+    border-color: #13c1ac !important;
+    outline: none;
+    box-shadow: none;
+    background-color: initial;
+}
+
+.edit_profile input{
+    height: 50px;
+    width: 100%;
+    font-size: 1rem;
+    color: #495057;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+}
+
+.edit_profile .btn_close{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.edit_profile .btn-info{
+    margin-top: 20px;
+    background-color: #13c1ac;
+    width: 100%;
+    padding: 10px;
+    border-radius: 50px;
+    color: #FFF;
+    border: none;
+    transition: .2s;
+}
+
+.edit_profile .btn-info:hover{
+    background-color: #0F9989;
+}
+
+.edit_profile .info_avatar{
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+    margin: 15px auto;
+    border: 1px solid #ddd;
+    cursor: pointer;
+}
+.edit_profile .info_avatar img{
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+.edit_profile .info_avatar span{
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    color: #13c1ac;
+    transition: 0.3s ease-in-out;
+    background: #fff5;
+}
+.edit_profile .info_avatar:hover span{
+    bottom: -15%;
+}
+.edit_profile .info_avatar #file_up{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+}
+::-webkit-file-upload-button{
+    cursor: pointer;
+}
