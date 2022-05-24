@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-import "./index.css";
+import "./assets/styles/global.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import DataProvider from "./redux/store";

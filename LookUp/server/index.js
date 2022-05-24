@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from '../server/routes/authRouter.js'
 import userRouter from '../server/routes/userRouter.js'
 import listingRouter from '../server/routes/listingRouter.js'
+import messageRouter from '../server/routes/messageRouter.js'
 
 dotenv.config();
 const app = exrpess();
@@ -20,6 +21,7 @@ app.use(cors());
 app.use('/api', authRouter);
 app.use('/api', userRouter);
 app.use('/api', listingRouter);
+app.use('/api', messageRouter);
 
 
 const CONNECTION_URL = process.env.MONGODB_URL;

@@ -37,6 +37,11 @@ const PageRender = () => {
         pageName = 'SearchedListings'
     }
 
+    if(pageName === 'message'){
+        pageName = 'Message'
+    }
+
+
     return generatePage(pageName);
 }
 

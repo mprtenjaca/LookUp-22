@@ -22,7 +22,6 @@ const SearchedListings = (props) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const history = useHistory();
-  // const searchedListings = location.state.listings.listings || [];
   let searchedString = "";
 
   const [listings, setListings] = useState([]);
