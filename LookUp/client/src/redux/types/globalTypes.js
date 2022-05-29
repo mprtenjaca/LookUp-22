@@ -1,7 +1,8 @@
 export const GLOBALTYPES = {
     AUTH: "AUTH",
     ALERT: "ALERT",
-    PEER: 'PEER'
+    PEER: 'PEER',
+    SOCKET: 'SOCKET'
 }
 
 export const EditData = (data, id, post) => {

@@ -261,7 +261,7 @@ const SearchedListings = (props) => {
                 priceFilterActivated ? "active-filter-div" : ""
               }`}
             >
-              <span class="material-icons-outlined">paid</span>
+              <span className="material-icons-outlined">paid</span>
               {priceFilterActivated
                 ? sliderPriceValues[0] + " - " + sliderPriceValues[1]
                 : "Price range"}
@@ -273,7 +273,7 @@ const SearchedListings = (props) => {
                 conditionFilterValues.length === 0 ? "" : "active-filter-div"
               }`}
             >
-              <span class="material-icons-outlined">auto_awesome</span>
+              <span className="material-icons-outlined">auto_awesome</span>
               {conditionFilterValues.length === 0
                 ? "Item Condition"
                 : conditionFilterValues.length + " conditions"}
@@ -281,7 +281,7 @@ const SearchedListings = (props) => {
           </li>
           <li>
             <div className="filter-div">
-              <span class="material-icons-outlined">place</span>Location
+              <span className="material-icons-outlined">place</span>Location
             </div>
           </li>
         </ul>

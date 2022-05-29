@@ -22,7 +22,9 @@ const MessageController = {
         try {
             const { sender, recipient, text } = req.body
 
-            if(!recipient || (!text.trim() && media.length === 0 && !call)) return;
+            if(!recipient || (!text.trim())){
+                return;
+            }
 
             const newConversation = await Conversations.findOneAndUpdate({
                 $or: [
@@ -55,7 +57,7 @@ const MessageController = {
             }), req.query).paginating()
 
             const conversations = await features.query.sort('-updatedAt')
-            .populate('recipients', 'avatar username fullname')
+            .populate('recipients', 'avatar username firstName lastName')
 
             res.json({
                 conversations,

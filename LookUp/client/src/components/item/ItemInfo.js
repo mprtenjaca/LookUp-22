@@ -4,11 +4,21 @@ import moment from 'moment'
 import {Wrapper} from '@googlemaps/react-wrapper'
 
 import '../../assets/css/item-detail.css'
+import { useHistory } from 'react-router'
+import { MESS_TYPES } from '../../redux/actions/messageAction'
+import { useDispatch } from 'react-redux'
 
 const ItemInfo = ({item, user}) => {
 
-  const ref = useRef(null);
-  const [map, setMap] = useState();
+  const ref = useRef(null)
+  const history = useHistory()
+  const dispatch = useDispatch()
+  const [map, setMap] = useState()
+
+  const handleChat = (itemUser) => (e) => {
+    dispatch({type: MESS_TYPES.ADD_USER, payload: {...itemUser, text: '', media: []}})
+    return history.push('/message/' + itemUser._id)
+  }
 
   return (
     <div className='item-container'>
@@ -35,7 +45,7 @@ const ItemInfo = ({item, user}) => {
               </Col>
 
               <Col md={6} sm={12} xs={12} className="chat-btn">
-                <button>Chat to buy</button>
+                <button onClick={handleChat(itemDetail.user)}>Chat to buy</button>
               </Col>
             </Row>
 

@@ -1,4 +1,4 @@
-import { GLOBALTYPES, DeleteData } from '../types/authTypes'
+import { GLOBALTYPES, DeleteData } from '../types/globalTypes'
 import { postDataAPI, getDataAPI, deleteDataAPI } from '../../utils/fetchData'
 
 export const MESS_TYPES = {
@@ -19,7 +19,7 @@ export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
 
     const { _id, avatar, firstName, lastName, username } = auth.user
     // socket.emit('addMessage', {...msg, user: { _id, avatar, firstName, lastName, username } })
-    
+    // dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
     try {
         await postDataAPI('message', msg, auth.token)
     } catch (err) {
@@ -35,7 +35,7 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
         res.data.conversations.forEach(item => {
             item.recipients.forEach(cv => {
                 if(cv._id !== auth.user._id){
-                    newArr.push({...cv, text: item.text, media: item.media, call: item.call})
+                    newArr.push({...cv, text: item.text})
                 }
             })
         })
@@ -52,9 +52,8 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
 
 export const getMessages = ({auth, id, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 9}`, auth.token)
+        const res = await getDataAPI(`message/${id}?limit=${page * 15}`, auth.token)
         const newData = {...res.data, messages: res.data.messages.reverse()}
-
         dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page}})
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
@@ -63,7 +62,7 @@ export const getMessages = ({auth, id, page = 1}) => async (dispatch) => {
 
 export const loadMoreMessages = ({auth, id, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 9}`, auth.token)
+        const res = await getDataAPI(`message/${id}?limit=${page * 15}`, auth.token)
         const newData = {...res.data, messages: res.data.messages.reverse()}
 
         dispatch({type: MESS_TYPES.UPDATE_MESSAGES, payload: {...newData, _id: id, page}})

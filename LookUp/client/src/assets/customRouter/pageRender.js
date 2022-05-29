@@ -1,7 +1,8 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import NotFound from '../../components/NotFound';
+import { UTIL_TYPES } from '../../redux/reducers/utilReducer';
 
 const generatePage = (pageName) => {
     const component = () => require(`../../pages/${pageName}.js`).default;
@@ -15,6 +16,7 @@ const generatePage = (pageName) => {
 }
 
 const PageRender = () => {
+    const dispatch = useDispatch();
     const {page, id} = useParams();
     const {auth} = useSelector(state => state);
 
@@ -27,6 +29,7 @@ const PageRender = () => {
         }else{
             pageName = `${page}`;
         }
+
     }
     
     if(pageName === 'new-listing'){
@@ -41,6 +44,12 @@ const PageRender = () => {
         pageName = 'Message'
     }
 
+    // if(pageName === 'message/[id]'){
+    //     dispatch({type: UTIL_TYPES.HEADER_DISPLAY, payload: true})
+    // }
+    //else{
+    //     dispatch({type: UTIL_TYPES.HEADER_DISPLAY, payload: false})
+    // }
 
     return generatePage(pageName);
 }

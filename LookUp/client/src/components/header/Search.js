@@ -16,6 +16,7 @@ const Search = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [load, setLoad] = useState(false);
+  const [test, setTest] = useState(false);
 
   useEffect(() => {
     const url = new URLSearchParams(history.location.search);
@@ -44,7 +45,7 @@ const Search = () => {
     <>
       <form className="search_form" onSubmit={handleSearch}>
         <div className="inputgroup"> 
-          <span class="material-icons" style={search ? {color: '#13c1ac'} : {color: '#b6b3b3'}}>search</span>
+          <span className="material-icons" style={search ? {color: '#13c1ac'} : {color: '#b6b3b3'}}>search</span>
           <input
             type="text"
             name="search"

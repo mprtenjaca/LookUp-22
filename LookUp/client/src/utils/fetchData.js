@@ -15,7 +15,6 @@ export const postDataAPI = async (url, post, token) => {
         headers: { Authorization: token },
     };
 
-    console.log("postDataAPI", post, url)
     const res = await axios.post(`/api/${url}`, post, config);
     return res;
 }

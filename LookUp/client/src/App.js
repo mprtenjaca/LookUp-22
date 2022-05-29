@@ -1,7 +1,8 @@
 
 import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useHistory } from "react-router";
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import { refreshToken } from './redux/actions/authAction';
@@ -15,25 +16,29 @@ import PageRender from './assets/customRouter/pageRender';
 function App() {
 
   const dispatch = useDispatch()
+  const history = useHistory()
 
-  const { auth } = useSelector(state => state)
+  const { auth, messageRed } = useSelector(state => state)
 
-  useEffect(() => {
-    dispatch(refreshToken())
-
-  }, [dispatch]);
+  const [loc, setLoc] = useState(false)
 
   // useEffect(() => {
-  //   if(auth.token){
-  //     dispatch()
-  //   }
-  // }, [dispatch, auth.token])
+  //   const socket = io()
+  //   console.log(socket)
+  //   dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
+  //   return () => socket.close()
+  // }, [])
+  useEffect(() => {
+    dispatch(refreshToken())
+  }, [dispatch]);
+
 
   return (
     <Router>
       <Alert/>
       <div className="main">
         {auth.token && <Header />}
+        {/* {auth.token && <SocketClient />} */}
 
         <Route exact path="/" component={auth.token ? Home : Login} />
         <Route exact path="/register" component={Register} />
