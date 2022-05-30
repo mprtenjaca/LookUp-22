@@ -18,8 +18,8 @@ export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
     dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
     const { _id, avatar, firstName, lastName, username } = auth.user
-    // socket.emit('addMessage', {...msg, user: { _id, avatar, firstName, lastName, username } })
-    // dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
+    socket.emit('addMessage', {...msg, user: { _id, avatar, firstName, lastName, username } })
+
     try {
         await postDataAPI('message', msg, auth.token)
     } catch (err) {

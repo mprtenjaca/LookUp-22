@@ -109,7 +109,6 @@ const NewListing = () => {
 
   return (
     <>
-    {console.log(productData)}
       <div className="container">
         <Form onSubmit={handleSubmit}>
           <Row>

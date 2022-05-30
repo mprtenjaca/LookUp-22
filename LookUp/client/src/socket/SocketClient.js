@@ -21,8 +21,6 @@ const SocketClient = ({socket}) => {
     const { auth } = useSelector(state => state)
     const dispatch = useDispatch()
 
-    const audioRef = useRef()
-
     // joinUser
     // useEffect(() => {
     //     socket.emit('joinUser', auth.user)
@@ -30,8 +28,7 @@ const SocketClient = ({socket}) => {
 
     // Message
     useEffect(() => {
-        console.log(socket)
-        socket?.on('addMessageToClient', msg =>{
+        socket.on('addMessageToClient', msg =>{
             dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
             dispatch({
                 type: MESS_TYPES.ADD_USER, 
@@ -49,9 +46,6 @@ const SocketClient = ({socket}) => {
 
     return (
         <>
-            {/* <audio controls ref={audioRef} style={{display: 'none'}} >
-                <source src={audiobell} type="audio/mp3" />
-            </audio> */}
         </>
     )
 }

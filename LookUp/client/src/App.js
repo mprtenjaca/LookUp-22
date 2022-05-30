@@ -2,32 +2,22 @@
 import './App.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from "react-router";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Login from './pages/Login';
-import { refreshToken } from './redux/actions/authAction';
+import { refreshToken, test } from './redux/actions/authAction';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Alert from './components/alert/Alert';
 import Header from './components/header/Header';
 import PrivateRouter from './assets/customRouter/privateRouter';
 import PageRender from './assets/customRouter/pageRender';
+import ScreenSize from './components/ScreenSize';
 
 function App() {
-
   const dispatch = useDispatch()
-  const history = useHistory()
+  const { auth } = useSelector(state => state)
 
-  const { auth, messageRed } = useSelector(state => state)
-
-  const [loc, setLoc] = useState(false)
-
-  // useEffect(() => {
-  //   const socket = io()
-  //   console.log(socket)
-  //   dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
-  //   return () => socket.close()
-  // }, [])
   useEffect(() => {
     dispatch(refreshToken())
   }, [dispatch]);
@@ -38,6 +28,7 @@ function App() {
       <Alert/>
       <div className="main">
         {auth.token && <Header />}
+        {auth.token && <ScreenSize />}
         {/* {auth.token && <SocketClient />} */}
 
         <Route exact path="/" component={auth.token ? Home : Login} />

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { io } from "socket.io-client";
 import { addMessage, getMessages, MESS_TYPES } from "../../redux/actions/messageAction";
+import { socket } from "../../redux/socket";
 import { GLOBALTYPES } from "../../redux/types/globalTypes";
 import SocketClient from "../../socket/SocketClient";
 import ScreenSize from "../ScreenSize";
@@ -19,7 +19,6 @@ const MessagesSection = () => {
   const [text, setText] = useState("");
   const [loadMedia, setLoadMedia] = useState(false);
 
-  const socket = useRef(io());
   const refDisplay = useRef();
   const pageEnd = useRef();
 
@@ -29,8 +28,7 @@ const MessagesSection = () => {
   const [isLoadMore, setIsLoadMore] = useState(0);
 
   useEffect(() => {
-    socket.current.emit("joinUser", auth.user._id);
-    socket.current.close()
+    socket.emit("joinUser", auth.user._id);
   }, [user]);
 
   useEffect(() => {
@@ -83,16 +81,14 @@ const MessagesSection = () => {
     };
 
     setData([...data, msg])
-
-    dispatch(addMessage({ msg, auth }));
-    socket.current.emit("addMessage", msg);
+    dispatch(addMessage({ msg, auth, socket }));
     setText("");
   };
 
   return (
     <>
     
-      {auth.token && <SocketClient socket={socket.current}/>}
+      {auth.token && <SocketClient socket={socket}/>}
       <div className="message_header">
        <span className="material-icons-outlined back-action" onClick={() => history.goBack()}>keyboard_backspace</span><UserCard user={user} />
       </div>

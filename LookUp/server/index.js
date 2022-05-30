@@ -12,6 +12,7 @@ import listingRouter from '../server/routes/listingRouter.js'
 import messageRouter from '../server/routes/messageRouter.js'
 import { Server } from 'socket.io';
 import SocketServer from './socket/socketServer.js';
+import ws from 'ws'
 
 dotenv.config();
 const app = exrpess();
@@ -23,7 +24,9 @@ app.use(cors());
 
 //Socket
 const http = httpServer.createServer(app)
-const io = new Server(http, {cors: {origin: '*'}})
+const wsServer = ws.Server
+// const eiowserver = eiows.Server
+const io = new Server(http, wsServer)
 
 
 io.on('connection', socket => {

@@ -44,9 +44,10 @@ const PageRender = () => {
         pageName = 'Message'
     }
 
-    // if(pageName === 'message/[id]'){
-    //     dispatch({type: UTIL_TYPES.HEADER_DISPLAY, payload: true})
-    // }
+    if(pageName === 'message/[id]'){
+        //console.log(pageName)
+        // dispatch({type: UTIL_TYPES.HEADER_DISPLAY, payload: true})
+    }
     //else{
     //     dispatch({type: UTIL_TYPES.HEADER_DISPLAY, payload: false})
     // }

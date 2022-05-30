@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Col, Row } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 
 import Conversations from "../components/message/Conversations";
+import ScreenSize from "../components/ScreenSize";
 
 const Message = () => {
-  const dispatch = useDispatch();
-  const { auth, alert, messageRed } = useSelector((state) => state);
-
-  const [conversations, setConversations] = useState([])
-
-  useEffect(() => {
-    if(messageRed.users){
-        setConversations(messageRed.users)
-    }
-  }, [messageRed.users])
-
   return (
     <div className="message-main">
+      <ScreenSize/>
       <Row className="main">
         <Col md={3} className="conversations">
           <Conversations />
