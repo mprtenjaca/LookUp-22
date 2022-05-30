@@ -8,6 +8,10 @@
     padding: 10px 20px;
 }
 
+.item-container {
+    padding-bottom: 50px;
+}
+
 .item .item-path{
     margin-bottom: 50px;
     text-align: center;

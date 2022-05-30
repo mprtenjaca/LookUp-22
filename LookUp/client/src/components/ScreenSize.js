@@ -21,7 +21,6 @@ export default function ScreenSize() {
       window.addEventListener('resize', detectSize)
 
       if(windowDimenion.winWidth <= 766 && new RegExp('/message/(.*)').test(history.location.pathname)){
-        console.log("TEST")
         document.getElementsByClassName('header')[0].style.display = 'none'
       }else{
         document.getElementsByClassName('header')[0].style.display = 'block'

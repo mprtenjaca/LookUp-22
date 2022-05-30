@@ -52,7 +52,7 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
 
 export const getMessages = ({auth, id, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 15}`, auth.token)
+        const res = await getDataAPI(`message/${id}?limit=${page * 25}`, auth.token)
         const newData = {...res.data, messages: res.data.messages.reverse()}
         dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page}})
     } catch (err) {
@@ -62,7 +62,7 @@ export const getMessages = ({auth, id, page = 1}) => async (dispatch) => {
 
 export const loadMoreMessages = ({auth, id, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 15}`, auth.token)
+        const res = await getDataAPI(`message/${id}?limit=${page * 25}`, auth.token)
         const newData = {...res.data, messages: res.data.messages.reverse()}
 
         dispatch({type: MESS_TYPES.UPDATE_MESSAGES, payload: {...newData, _id: id, page}})

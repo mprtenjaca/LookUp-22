@@ -14,7 +14,7 @@ const Message = () => {
         </Col>
 
         <Col md={9} className="chat hide-chat">
-          Message
+          <span className="material-icons">question_answer</span>
         </Col>
       </Row>
     </div>

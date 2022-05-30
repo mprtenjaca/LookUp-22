@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { addMessage, getMessages, MESS_TYPES } from "../../redux/actions/messageAction";
+import { addMessage, getMessages, loadMoreMessages } from "../../redux/actions/messageAction";
 import { socket } from "../../redux/socket";
 import { GLOBALTYPES } from "../../redux/types/globalTypes";
 import SocketClient from "../../socket/SocketClient";
@@ -12,12 +12,11 @@ import MsgDisplay from "./MsgDisplay";
 const MessagesSection = () => {
   const { auth, messageRed } = useSelector((state) => state);
   const dispatch = useDispatch();
-  const history = useHistory()
+  const history = useHistory();
 
   const { id } = useParams();
   const [user, setUser] = useState([]);
   const [text, setText] = useState("");
-  const [loadMedia, setLoadMedia] = useState(false);
 
   const refDisplay = useRef();
   const pageEnd = useRef();
@@ -27,14 +26,11 @@ const MessagesSection = () => {
   const [page, setPage] = useState(0);
   const [isLoadMore, setIsLoadMore] = useState(0);
 
-  useEffect(() => {
-    socket.emit("joinUser", auth.user._id);
-  }, [user]);
-
+  // Get latest messages
   useEffect(() => {
     const getMessagesData = async () => {
       if (messageRed.data.every((item) => item._id !== id)) {
-        dispatch(getMessages({ auth, id }))
+        dispatch(getMessages({ auth, id }));
         setTimeout(() => {
           refDisplay.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }, 50);
@@ -43,8 +39,8 @@ const MessagesSection = () => {
     getMessagesData();
   }, [messageRed.data, data, id]);
 
+  // Get latest message after socket response
   useEffect(() => {
-
     const newData = messageRed.data.find((item) => item._id === id);
     if (newData) {
       setData(newData.messages);
@@ -53,6 +49,7 @@ const MessagesSection = () => {
     }
   }, [messageRed.data, id, data]);
 
+  // Get user
   useEffect(() => {
     if (id && messageRed.users.length > 0) {
       setTimeout(() => {
@@ -66,6 +63,31 @@ const MessagesSection = () => {
     }
   }, [messageRed.users, id]);
 
+  // Load More
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setIsLoadMore((p) => p + 1);
+        }
+      },
+      {
+        threshold: 0.1,
+      });
+
+    observer.observe(pageEnd.current);
+  }, [setIsLoadMore]);
+
+  // Load more messages
+  useEffect(() => {
+    if(isLoadMore > 1){
+        if(result >= page * 25){
+            dispatch(loadMoreMessages({auth, id, page: page + 1}))
+            setIsLoadMore(1)
+        }
+    }
+  },[isLoadMore])
+
+  // Send message
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -80,20 +102,26 @@ const MessagesSection = () => {
       createdAt: new Date().toISOString(),
     };
 
-    setData([...data, msg])
+    setData([...data, msg]);
     dispatch(addMessage({ msg, auth, socket }));
     setText("");
   };
 
   return (
     <>
-    
-      {auth.token && <SocketClient socket={socket}/>}
+      <ScreenSize/>
+      {auth.token && <SocketClient socket={socket} />}
       <div className="message_header">
-       <span className="material-icons-outlined back-action" onClick={() => history.goBack()}>keyboard_backspace</span><UserCard user={user} />
+        <span className="material-icons-outlined back-action" onClick={() => history.goBack()}>
+          keyboard_backspace
+        </span>
+        <UserCard user={user} />
       </div>
       <div className="chat_container">
         <div className="chat_display" ref={refDisplay}>
+          <button style={{marginTop: '-25px', opacity: 0}} ref={pageEnd}>
+            Load more
+          </button>
           {data.map((msg, index) => (
             <div key={index}>
               {msg.sender !== auth.user._id && (

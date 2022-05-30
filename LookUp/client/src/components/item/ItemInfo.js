@@ -1,22 +1,23 @@
-import React, { Profiler, useEffect, useRef, useState } from 'react'
-import { Button, Carousel, CarouselItem, Col, Row } from 'react-bootstrap'
+import React from 'react'
+import { Carousel, CarouselItem, Col, Row } from 'react-bootstrap'
 import moment from 'moment'
-import {Wrapper} from '@googlemaps/react-wrapper'
 
 import '../../assets/css/item-detail.css'
 import { useHistory } from 'react-router'
 import { MESS_TYPES } from '../../redux/actions/messageAction'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+
+import UserCard from '../user/UserCard'
+import { categories } from '../../utils/categoriesConstants'
 
 const ItemInfo = ({item, user}) => {
+  const { auth } = useSelector((state) => state);
 
-  const ref = useRef(null)
   const history = useHistory()
   const dispatch = useDispatch()
-  const [map, setMap] = useState()
 
   const handleChat = (itemUser) => (e) => {
-    dispatch({type: MESS_TYPES.ADD_USER, payload: {...itemUser, text: '', media: []}})
+    dispatch({type: MESS_TYPES.ADD_USER, payload: {...itemUser, text: '', item}})
     return history.push('/message/' + itemUser._id)
   }
 
@@ -30,23 +31,28 @@ const ItemInfo = ({item, user}) => {
 
             <Row className='item-path'>
               <Col md={12}>
-                <span>{itemDetail.category} / {itemDetail.subCategory} / {itemDetail.city} / {itemDetail.name}</span>
+                <span>{categories.filter(category => category.path === itemDetail.category).map(category => category.heading)} / {itemDetail.subCategory} / {itemDetail.city} / {itemDetail.name}</span>
               </Col>
             </Row>
 
 
             <Row className='user-header'>
-              <Col md={2} sm={4} xs={2} className="user-image">
+              <UserCard user={itemDetail.user}/>
+              {/* <Col md={2} sm={4} xs={2} className="user-image">
                 
                 <img src={itemDetail.user.avatar}/>
               </Col>
               <Col md={4} sm={8} xs={10} className="user-name">
                 <h5>{itemDetail.user.firstName} {itemDetail.user.lastName}</h5>
-              </Col>
+              </Col> */}
 
-              <Col md={6} sm={12} xs={12} className="chat-btn">
-                <button onClick={handleChat(itemDetail.user)}>Chat to buy</button>
-              </Col>
+              {
+                auth.user._id === itemDetail.user._id ? '' :
+                <Col md={6} sm={12} xs={12} className="chat-btn">
+                  <button onClick={handleChat(itemDetail.user)}>Chat to buy</button>
+                </Col>
+              }
+              
             </Row>
 
 
@@ -54,8 +60,8 @@ const ItemInfo = ({item, user}) => {
               <Col md={12} className="item-image">
                   <Carousel interval={null}>
                     {
-                      itemDetail.photos.map((photo) => (
-                        <CarouselItem>
+                      itemDetail.photos.map((photo, index) => (
+                        <CarouselItem key={index}>
                           <img src={photo.url}/>
                         </CarouselItem>
                       ))
@@ -79,7 +85,11 @@ const ItemInfo = ({item, user}) => {
               <Col md={12} className="category">
                 <ul className='category-list'>
                   <li>
-                  <span>{itemDetail.category}</span>
+                  <span onClick={() => history.push('/category/' + itemDetail.category)}>
+                    {
+                      categories.filter(category => category.path === itemDetail.category).map(category => category.heading)
+                    }
+                  </span>
                   </li>
                   <li>
                   <span className='subcategoty'>{itemDetail.subCategory}</span>
@@ -100,11 +110,10 @@ const ItemInfo = ({item, user}) => {
                 <p>{itemDetail.city} {itemDetail.postalCode}</p>
               </Col>
 
-              <Col md={12}>
+              {/* <Col md={12}>
                 <Wrapper apiKey='AIzaSyBY6NJ4ZD8X6BiVYayK-wt5RXJrrOimg5o'>
-                  {/* <h1>test</h1> */}
                 </Wrapper>
-              </Col>
+              </Col> */}
 
             </Row>
           </div>

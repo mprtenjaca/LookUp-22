@@ -22,9 +22,9 @@ const SocketClient = ({socket}) => {
     const dispatch = useDispatch()
 
     // joinUser
-    // useEffect(() => {
-    //     socket.emit('joinUser', auth.user)
-    // },[socket, auth.user])
+    useEffect(() => {
+        socket.emit('joinUser', auth.user)
+    },[socket, auth.user])
 
     // Message
     useEffect(() => {
