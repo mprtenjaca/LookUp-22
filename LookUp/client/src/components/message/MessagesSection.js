@@ -17,6 +17,7 @@ const MessagesSection = () => {
   const { id } = useParams();
   const [user, setUser] = useState([]);
   const [text, setText] = useState("");
+  const [itemID, setItemID] = useState("");
 
   const refDisplay = useRef();
   const pageEnd = useRef();
@@ -28,26 +29,32 @@ const MessagesSection = () => {
 
   // Get latest messages
   useEffect(() => {
+    const url = new URLSearchParams(history.location.search);
+    setItemID(url.get("itemId"))
+    const urlItemId = url.get("itemId")
     const getMessagesData = async () => {
-      if (messageRed.data.every((item) => item._id !== id)) {
-        dispatch(getMessages({ auth, id }));
+      if (messageRed.data.every((item) => item.listing !== urlItemId)) {
+        dispatch(getMessages({ auth, id, itemID: urlItemId }));
         setTimeout(() => {
           refDisplay.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }, 50);
       }
     };
     getMessagesData();
-  }, [messageRed.data, data, id]);
+  }, [messageRed.data, data, id, history.location.search]);
 
   // Get latest message after socket response
   useEffect(() => {
-    const newData = messageRed.data.find((item) => item._id === id);
+    const url = new URLSearchParams(history.location.search);
+    setItemID(url.get("itemId"))
+    const urlItemId = url.get("itemId")
+    const newData = messageRed.data.find((item) => item.listing === urlItemId);
     if (newData) {
       setData(newData.messages);
       setResult(newData.result);
       setPage(newData.page);
     }
-  }, [messageRed.data, id, data]);
+  }, [messageRed.data, id, data, history.location.search]);
 
   // Get user
   useEffect(() => {
@@ -55,9 +62,11 @@ const MessagesSection = () => {
       setTimeout(() => {
         refDisplay.current.scrollIntoView({ behavior: "smooth", block: "end" });
       }, 50);
-
+      
       const newUser = messageRed.users.find((user) => user._id === id);
+
       if (newUser) {
+        console.log(user)
         setUser(newUser);
       }
     }
@@ -98,13 +107,17 @@ const MessagesSection = () => {
     const msg = {
       sender: auth.user._id,
       recipient: id,
+      listing: itemID,
       text,
       createdAt: new Date().toISOString(),
     };
 
+    console.log(msg)
+    console.log("BEFORE: ", messageRed.users)
     setData([...data, msg]);
     dispatch(addMessage({ msg, auth, socket }));
     setText("");
+    console.log("AFTER: ", messageRed.users)
   };
 
   return (

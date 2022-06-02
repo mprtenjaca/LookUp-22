@@ -20,27 +20,53 @@ class APIfeatures {
 const MessageController = {
     createMessage: async (req, res) => {
         try {
-            const { sender, recipient, text } = req.body
-
+            const { sender, recipient, listing, text } = req.body
+            console.log("sender: ", sender)
+            console.log("recipient: ", recipient)
+            console.log("listing: ", listing)
             if(!recipient || (!text.trim())){
                 return;
             }
 
-            const newConversation = await Conversations.findOneAndUpdate({
-                $or: [
-                    {recipients: [sender, recipient]},
-                    {recipients: [recipient, sender]}
+            const test = await Conversations.find({
+                $and: [
+                    {listing: listing},
+                    {$or: [
+                        {recipients: [sender, recipient]},
+                        {recipients: [recipient, sender]}
+                    ]},
                 ]
+                
+            })
+
+            // console.log("CONVO FIND: ", test)
+
+            const newConversation = await Conversations.findOneAndUpdate({
+                $and: [
+                    {listing: listing},
+                    {$or: [
+                        {recipients: [sender, recipient]},
+                        {recipients: [recipient, sender]}
+                    ]},
+                ]
+                
             }, {
                 recipients: [sender, recipient],
+                listing,
                 text
             }, { new: true, upsert: true })
+
+            // console.log("NEW CONVO: ", newConversation)
 
             const newMessage = new Messages({
                 conversation: newConversation._id,
                 sender,
-                recipient, text
+                recipient, 
+                listing,
+                text
             })
+
+            console.log("NEW MESSAGE: ", newMessage)
 
             await newMessage.save()
 
@@ -58,6 +84,9 @@ const MessageController = {
 
             const conversations = await features.query.sort('-updatedAt')
             .populate('recipients', 'avatar username firstName lastName')
+            .populate('listing', 'name photos category user')
+
+            // console.log("CONVOS: ", conversations)
 
             res.json({
                 conversations,
@@ -69,13 +98,23 @@ const MessageController = {
         }
     },
     getMessages: async (req, res) => {
+
+        console.log("QUERY: ",req.query.itemId)
+        console.log("USER: ",req.user._id)
+        console.log("PARAMS: ",req.params.id)
+
         try {
+
             const features = new APIfeatures(Messages.find({
-                $or: [
-                    {sender: req.user._id, recipient: req.params.id},
-                    {sender: req.params.id, recipient: req.user._id}
-                ]
-            }), req.query).paginating()
+
+                $and: [
+                    {listing: req.query.itemId},
+                    {$or: [
+                        {sender: req.user._id, recipient: req.params.id},
+                        {sender: req.params.id, recipient: req.user._id}
+                    ]},
+                ],
+            }), req.query.limit).paginating()
 
             const messages = await features.query.sort('-createdAt')
 
@@ -85,6 +124,7 @@ const MessageController = {
             })
 
         } catch (err) {
+            console.log(err)
             return res.status(500).json({msg: err.message})
         }
     },

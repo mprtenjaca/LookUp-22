@@ -23,7 +23,7 @@ const SocketClient = ({socket}) => {
 
     // joinUser
     useEffect(() => {
-        socket.emit('joinUser', auth.user)
+        socket.emit('joinUser', auth.user._id)
     },[socket, auth.user])
 
     // Message
@@ -34,7 +34,8 @@ const SocketClient = ({socket}) => {
                 type: MESS_TYPES.ADD_USER, 
                 payload: {
                     ...msg.user, 
-                    text: msg.text
+                    text: msg.text,
+                    listing: msg.listing
                 }
             })
         })

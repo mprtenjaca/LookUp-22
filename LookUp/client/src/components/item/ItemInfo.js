@@ -16,9 +16,9 @@ const ItemInfo = ({item, user}) => {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const handleChat = (itemUser) => (e) => {
-    dispatch({type: MESS_TYPES.ADD_USER, payload: {...itemUser, text: '', item}})
-    return history.push('/message/' + itemUser._id)
+  const handleChat = (itemUser, itemDetail) => (e) => {
+    dispatch({type: MESS_TYPES.ADD_USER, payload: {...itemUser, text: '', listing: itemDetail}})
+    return history.push('/message/' + itemUser._id + "?itemId=" + itemDetail._id)
   }
 
   return (
@@ -49,7 +49,7 @@ const ItemInfo = ({item, user}) => {
               {
                 auth.user._id === itemDetail.user._id ? '' :
                 <Col md={6} sm={12} xs={12} className="chat-btn">
-                  <button onClick={handleChat(itemDetail.user)}>Chat to buy</button>
+                  <button onClick={handleChat(itemDetail.user, itemDetail)}>Chat to buy</button>
                 </Col>
               }
               

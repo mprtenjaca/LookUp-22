@@ -15,8 +15,9 @@ export const MESS_TYPES = {
 
 
 export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
-    dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
 
+    dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
+    console.log("NOVA PORUKA: ", msg)
     const { _id, avatar, firstName, lastName, username } = auth.user
     socket.emit('addMessage', {...msg, user: { _id, avatar, firstName, lastName, username } })
 
@@ -35,7 +36,7 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
         res.data.conversations.forEach(item => {
             item.recipients.forEach(cv => {
                 if(cv._id !== auth.user._id){
-                    newArr.push({...cv, text: item.text})
+                    newArr.push({...cv, text: item.text, listing: item.listing})
                 }
             })
         })
@@ -50,11 +51,16 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
     }
 }
 
-export const getMessages = ({auth, id, page = 1}) => async (dispatch) => {
+export const getMessages = ({auth, id, itemID, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 25}`, auth.token)
+        const res = await getDataAPI(`message/${id}?itemId=${itemID}&limit=${page * 25}`, auth.token)
+
         const newData = {...res.data, messages: res.data.messages.reverse()}
-        dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page}})
+        let listingId = null
+        if(newData){
+            listingId = newData.messages[0].listing
+        }
+        dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page, listing: listingId}})
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }

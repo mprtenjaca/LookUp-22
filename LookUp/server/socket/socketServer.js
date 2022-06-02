@@ -10,13 +10,14 @@ const EditData = (data, id, call) => {
 const addUser = (userId, socketId) => {
     !users.some(user => user.id === userId) && 
     users.push({id: userId, socketId: socketId})
+
+    // console.log("USERS: ", users)
 }
 
 const SocketServer = (socket) => {
     // Connect
     socket.on('joinUser', userId => {
         addUser(userId, socket.id)
-        console.log("users: ", users)
     })
 
     // Disconnect
@@ -27,7 +28,7 @@ const SocketServer = (socket) => {
     // Message
     socket.on('addMessage', msg => {
         const user = users.find(user => user.id === msg.recipient)
-        console.log(msg)
+        console.log("SOCKET PORUKA: ", msg)
         console.log(users.find(user => user.id === msg.recipient))
         user && socket.to(user.socketId).emit('addMessageToClient', msg)
     })

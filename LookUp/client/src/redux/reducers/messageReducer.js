@@ -5,36 +5,41 @@ const initialState = {
   users: [],
   resultUsers: 0,
   data: [],
+  listing: {},
   firstLoad: false,
 };
 
 const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case MESS_TYPES.ADD_USER:
-      if (state.users.every((item) => item._id !== action.payload._id)) {
+      if (state.users.every((item) => item._id !== action.payload._id && item.listing._id !== action.payload.listing)) {
         return {
           ...state,
           users: [action.payload, ...state.users],
+          listing: action.payload.listing,
         };
+      } else {
+        return state;
       }
-      return state;
     case MESS_TYPES.ADD_MESSAGE:
       return {
         ...state,
-        data: state.data.map(item => 
-          item._id === action.payload.recipient || item._id === action.payload.sender 
-          ? {
-              ...item,
-              messages: [...item.messages, action.payload],
-              result: item.result + 1
-          }
-          : item
-      ),
+        data: state.data.map((item) =>
+          (item._id === action.payload.recipient || item._id === action.payload.sender) && item.listing === action.payload.listing
+            ? {
+                ...item,
+                messages: [...item.messages, action.payload],
+                result: item.result + 1,
+                listing: action.payload.listing,
+              }
+            : item
+        ),
+        listing: action.payload.listing,
         users: state.users.map((user) =>
-          user._id === action.payload.recipient || user._id === action.payload.sender
+          (user._id === action.payload.recipient || user._id === action.payload.sender) && (user.listing._id === action.payload.listing)
             ? {
                 ...user,
-                text: action.payload.text
+                text: action.payload.text,
               }
             : user
         ),
@@ -50,6 +55,7 @@ const messageReducer = (state = initialState, action) => {
       return {
         ...state,
         data: [...state.data, action.payload],
+        listing: action.payload.listing,
       };
     case MESS_TYPES.UPDATE_MESSAGES:
       return {
