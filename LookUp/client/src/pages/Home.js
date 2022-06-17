@@ -21,7 +21,7 @@ const Home = () => {
         </div>
         <div className="row text-center">
           <div className="col main-home">
-            <ul className="navbar-nav flex-row">
+            <ul className="navbar-nav flex-row disable-select">
               {categories.map((link, index) => (
                 <li className={`nav-item px-2 ${link.path}`} key={index}>
                   <Link className="nav-link" to={"/category/" + link.path}>

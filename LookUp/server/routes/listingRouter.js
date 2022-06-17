@@ -13,7 +13,7 @@ router.route('/listings')
 router.route('/listing/:id')
     .patch(auth, ListingController.updatePost)
     .get(auth, ListingController.getPost)
-    .delete(auth, ListingController.deletePost)
+    .delete(auth, ListingController.deleteListing)
 
 router.route('/category/:id').get(auth, ListingController.getCategoryListings)
 
@@ -29,7 +29,7 @@ router.patch('/saveListing/:id', auth, ListingController.savePost)
 
 router.patch('/unSaveListing/:id', auth, ListingController.unSavePost)
 
-router.get('/getSaveListings', auth, ListingController.getSavePosts)
+router.get('/getSavedListings', auth, ListingController.getSavedListings)
 
 
 export default router;

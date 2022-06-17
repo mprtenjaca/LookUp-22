@@ -12,7 +12,7 @@ const initialState = {
 const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case MESS_TYPES.ADD_USER:
-      if (state.users.every((item) => item._id !== action.payload._id && item.listing._id !== action.payload.listing)) {
+      if (state.users.every((item) => item._id !== action.payload._id && item.listing._id !== action.payload.listing._id)) {
         return {
           ...state,
           users: [action.payload, ...state.users],
@@ -25,7 +25,7 @@ const messageReducer = (state = initialState, action) => {
       return {
         ...state,
         data: state.data.map((item) =>
-          (item._id === action.payload.recipient || item._id === action.payload.sender) && item.listing === action.payload.listing
+          (item._id === action.payload.recipient || item._id === action.payload.sender) && item.listing._id === action.payload.listing._id
             ? {
                 ...item,
                 messages: [...item.messages, action.payload],
@@ -36,7 +36,7 @@ const messageReducer = (state = initialState, action) => {
         ),
         listing: action.payload.listing,
         users: state.users.map((user) =>
-          (user._id === action.payload.recipient || user._id === action.payload.sender) && (user.listing._id === action.payload.listing)
+          (user._id === action.payload.recipient || user._id === action.payload.sender) && (user.listing._id === action.payload.listing._id)
             ? {
                 ...user,
                 text: action.payload.text,
@@ -61,6 +61,7 @@ const messageReducer = (state = initialState, action) => {
       return {
         ...state,
         data: EditData(state.data, action.payload._id, action.payload),
+        listing: action.payload.listing,
       };
     case MESS_TYPES.DELETE_MESSAGES:
       return {

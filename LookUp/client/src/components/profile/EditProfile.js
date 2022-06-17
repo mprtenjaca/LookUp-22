@@ -70,7 +70,7 @@ const EditProfile = ({ setOnEdit }) => {
   return (
     <div className="edit_profile">
       <button
-        className="btn btn-danger btn_close"
+        className="btn_close"
         onClick={() => setOnEdit(false)}
       >
         Close

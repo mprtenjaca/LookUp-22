@@ -1,124 +1,150 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Dropdown, DropdownButton, Row, Tab, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useLocation, useParams } from "react-router";
 
 import "../../assets/css/profile-card.css";
+import { logout } from "../../redux/actions/authAction";
 import { getProfileUser } from "../../redux/actions/profileAction";
 import EditProfile from "./EditProfile";
+import SavedListings from "./SavedListings";
 
-
-const ProfileInfo = ({id, auth, profile, dispatch}) => {
-  
+const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
   const [userData, setUserData] = useState([]);
   const [listings, setListings] = useState([]);
-  const [result, setResult] = useState(9)
-  const [page, setPage] = useState(0)
-  const [load, setLoad] = useState(false)
-  const [onEdit, setOnEdit] = useState(false)
+  const [result, setResult] = useState(9);
+  const [page, setPage] = useState(0);
+  const [load, setLoad] = useState(false);
+  const [onEdit, setOnEdit] = useState(false);
 
-  const history = useHistory()
+  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
+    // Reload page when listing is updated in full
+    if (location.state && location.state.from && location.state.from.includes("/item/edit/")) {
+      if(!alert.loading){
+        if (!window.location.hash) {
+            window.location = window.location + "#loaded";
+            window.location.reload();
+        }
+      }
+    }
+  }, [location, alert]);
 
+  useEffect(() => {
     if (id === auth.user._id) {
       setUserData([auth.user]);
     } else {
-      const newData = profile.users.filter(user => user._id === id)
+      const newData = profile.users.filter((user) => user._id === id);
       setUserData(newData);
     }
 
-
-    profile.listings.forEach(data => {
-      if(data._id === id){
-          setListings(data.listings)
-          setResult(data.result)
-          setPage(data.page)
+    profile.listings.forEach((data) => {
+      if (data._id === id) {
+        setListings(data.listings);
+        setResult(data.result);
+        setPage(data.page);
       }
-    })
-
+    });
   }, [id, auth.user, dispatch, profile.users, profile.listings]);
 
   const handleListingDetails = (listingId) => (e) => {
     const link = "/item/" + listingId;
-    history.push(link)
-  }
+    history.push(link);
+  };
 
   return (
     <div className="card-container">
-      <div className="container">
+      <div className="profile-container">
         {userData.map((user) => (
-        <div className="profile-main">
-          <Row className="profile" key={user._id} md="auto">
-            <Col lg={6} md={6} sm={12}>
-              <div className="profile-data">
-                <div className="profile-image">
-                  <img src={user.avatar}/>
+          <Container fluid>
+            <Row className="profile" key={user._id}>
+              <Col lg={6} md={6} sm={12}>
+                <div className="profile-data">
+                  <div className="profile-image">
+                    <img src={user.avatar} />
+                  </div>
+                  <div className="profile-data-info">
+                    <p className="profile-user-name">
+                      {user.firstName} {user.lastName}
+                    </p>
+                    <span>
+                      <small className="profile-mini-info">
+                        <span className="material-icons">place</span>
+                        {user.city}, {user.postalCode}
+                      </small>
+                      <small className="profile-mini-info">
+                        <span className="material-icons">call</span>
+                        {user.contactPhone}
+                      </small>
+                    </span>
+                  </div>
                 </div>
-                <div className="profile-data-info">
-                  <p className="profile-user-name">
-                    {user.firstName} {user.lastName}
-                  </p>
-                  <span>
-                    <small>1 2 3 4 5</small>
+              </Col>
+              <Col lg={6} md={6} sm={12} className="profile-about">
+                <div className="profile-user-settings">
+                  {id === auth.user._id ? (
+                    <button className="edit-profile-btn" onClick={() => setOnEdit(true)}>
+                      Edit profile
+                    </button>
+                  ) : (
+                    // <Button className="btn profile-edit-btn" onClick={() => setOnEdit(true)}>Edit Profile</Button>
+                    <></>
+                  )}
+                  <span className="material-icons logout-btn" onClick={() => dispatch(logout())}>
+                    logout
                   </span>
                 </div>
-              </div>
-            </Col>
-            <Col lg={6} md={6} sm={12} className="profile-about">
-              <div className="profile-user-settings">
-                {id === auth.user._id ? (
-                  <Button className="btn profile-edit-btn" onClick={() => setOnEdit(true)}>Edit Profile</Button>
-                ) : (
-                  <></>
-                )}
-                <div className="profile-address">
-                  <span className="material-icons">place</span>
-                  <p className="address">
-                    {user.postalCode}, {user.city}
-                  </p>
-                </div>
-              </div>
-            </Col>
-          </Row>
+              </Col>
+            </Row>
 
-          {
-            onEdit && <EditProfile setOnEdit={setOnEdit}/>
-          }
-        
-        </div>  
+            {onEdit && <EditProfile setOnEdit={setOnEdit} />}
+          </Container>
         ))}
       </div>
 
       <div className="card-body">
-        <Row>
-          <Col lg={12}>
-            <div className="heading text-center">
-              <h3>Objave</h3>
-            </div>
-          </Col>
-        </Row>
 
-        <Row>
-          {listings.map((listing) => (
-            <Col className="card-column" lg={3} md={4} sm={6} xs={6} key={listing._id} onClick={handleListingDetails(listing._id)}>
-              <Card>
-                <Card.Img variant="top" src={listing.photos[0].url}/>
-                <Card.Body>
-                  <Card.Title>{listing.price} {listing.currency}</Card.Title>
-                  <Card.Text>
-                    <span className="card-text">{listing.name}</span>
-                  </Card.Text>
-                  <Card.Text>
-                    <p className="card-description">
-                      {listing.description}
-                    </p>
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        <Tabs defaultActiveKey="selling" id="uncontrolled-tab-example" className="profile-tabs">
+          <Tab eventKey="selling" title="Selling">
+            <Row>
+              {listings.map((listing) => (
+                <Col className="card-column" lg={3} md={4} sm={6} xs={6} key={listing._id} onClick={handleListingDetails(listing._id)}>
+                  <Card>
+                    <Card.Img variant="top" src={listing.photos[0].url} />
+                    <Card.Body>
+                      <Card.Title>
+                        {listing.price} {listing.currency}
+                      </Card.Title>
+                      <Card.Text>
+                        <span className="card-text">{listing.name}</span>
+                      </Card.Text>
+                      <Card.Text>
+                        <p className="card-description">{listing.description}</p>
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Tab>
+
+          {auth.user._id === id ? (
+            <Tab eventKey="sold" title="Sold">
+              asd
+            </Tab>
+          ) : (
+            <></>
+          )}
+          {auth.user._id === id ? (
+            <Tab eventKey="saved" title="Saved">
+              <SavedListings auth={auth} dispatch={dispatch} />
+            </Tab>
+          ) : (
+            <></>
+          )}
+        </Tabs>
       </div>
     </div>
   );

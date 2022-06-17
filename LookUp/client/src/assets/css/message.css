@@ -1,6 +1,6 @@
 .message-main {
   height: 90vh;
-  max-width: 1000px;
+  max-width: 100%;
   margin: auto;
   padding: 10px 20px;
 }
@@ -10,19 +10,54 @@
   height: 100%;
 }
 
-.conversations{
+.user-card-wrapper a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-card-wrapper .active-bullet {
+  width: 15px;
+  height: 15px;
+  background: #13c1ac;
+  border-radius: 50%;
+  box-shadow: 0px 0px 10px 0px #13c1ac;
+}
+
+.conversations {
   border-right: thin solid #ddd;
 }
 
 .custom-conversation {
   height: 91vh;
-  max-width: 1000px;
-  margin: 20px auto auto auto;
+  max-width: 100%;
+  /* margin: 20px auto auto auto; */
+  margin: auto;
   padding: 10px 20px;
 }
 
-.conversation-user-card{
+.chat-section {
+  padding: 0 5px !important;
+  border-right: thin solid #ddd;
+}
+
+.conversation-user-card {
   border-bottom: thin solid #ddd;
+  border-radius: 10px;
+  padding: 5px;
+  transition: 100ms ease-in;
+}
+
+.conversation-user-card .message_user {
+  border-radius: 10px;
+}
+
+.conversation-user-card .active-conversation {
+  background-color: #dbdbdb;
+}
+
+.conversation-user-card:hover {
+  background-color: #dbdbdb;
 }
 
 .user-card .user-name {
@@ -42,7 +77,7 @@
   margin: auto;
 }
 
-.chat .material-icons{
+.chat .material-icons {
   font-size: 100px;
   width: 100%;
   color: #13c1ac;
@@ -136,13 +171,76 @@
   background-color: #e0e3e6;
 }
 
+.item-section {
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: 100ms ease-out;
+  border: 1px solid rgb(230, 230, 230);
+}
+
+.item-section a {
+  text-decoration: none;
+  color: #253238;
+}
+
+.item-section:hover {
+  box-shadow: 0px 1px 18px -10px;
+  transform: translateY(-1.2px);
+}
+
+.item-section-image {
+  width: 100%;
+  margin: auto;
+  padding: 2px;
+}
+
+.item-section-image img {
+  width: 100%;
+  border-radius: 10%;
+  object-fit: cover;
+}
+
+.item-section-info {
+  padding: 10px 10px;
+}
+
+.show_hide_mobile_item_card {
+  display: none;
+}
+.show_hide_user_name_mobile {
+  display: block;
+}
+
+@media only screen and (max-width: 992px) {
+  .item-detail-section {
+    display: none;
+  }
+  .show_hide_mobile_item_card {
+    display: block;
+  }
+  .show_hide_user_name_mobile {
+    display: none !important;
+  }
+
+  .message_header_cards {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
 @media only screen and (max-width: 766px) {
+  .message-main {
+    padding: 0;
+  }
+
   .hide-conversations,
   .hide-chat {
     display: none;
   }
 
-  .conversations{
+  .conversations {
     border-right: none;
   }
 

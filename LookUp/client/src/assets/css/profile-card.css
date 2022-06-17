@@ -5,7 +5,7 @@
   letter-spacing: 0.5px;
 }
 
-.card-container{
+.card-container {
   width: 60%;
   margin: auto;
 }
@@ -31,8 +31,33 @@
   text-align: right;
 }
 
+.profile-data-info span{
+  font-size: 16px;
+  display: grid;
+}
+
 .card-body .heading {
   border-bottom: 3px solid #13c1ac;
+}
+
+.card-body .profile-tabs button{
+  color: #607d8b;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.card-body .profile-tabs{
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-tabs .nav-link.active{
+  color: #13c1ac;
+  border-top: 0px transparent;
+  border-right: 0 transparent;
+  border-left: 0 transparent;
+  border-bottom: 2px solid #13c1ac;
 }
 
 .card-body .card {
@@ -43,15 +68,15 @@
   cursor: pointer;
   transition: 100ms ease-out;
 }
-.card:hover{
+.card:hover {
   box-shadow: 0px 1px 18px -10px;
   transform: translateY(-1.5px);
 }
 
-.card .h5{
+.card .h5 {
   font-size: 1.3rem;
 }
-.card .card-text{
+.card .card-text {
   font-size: 1.2rem;
 }
 
@@ -70,11 +95,6 @@
   font-size: 0.875rem;
   padding: 0;
 }
-.card-body li::after {
-  content: "\00b7";
-  text-align: center;
-  margin: 0 2px;
-}
 
 .card-description {
   height: 70px;
@@ -89,56 +109,108 @@
   padding: 0px;
 }
 
-.profile-user-settings .profile-edit-btn{
+/* BEGIN SAVED BUTTON ON SAVED LISTINGS SECTION */
+.card-column .saved-listing-section{
+  text-align: end;
+  cursor: pointer;
+}
+
+.card-column .saved-listing-section span{
+  color: #FD6C67;
+  border-radius: 50%;
+  position: relative;
+  bottom: 10px;
+  padding: 2px;
+  transition: 200ms;
+}
+
+.card-column .saved-listing-section span:hover{
+  background-color: #d9d9d9;
+  transition: 200ms;
+}
+/* END SAVED BUTTON ON SAVED LISTINGS SECTION */
+
+.profile-user-settings{
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.profile-user-settings .profile-edit-btn {
   margin-bottom: 20px;
   background: #13c1ac;
   border-color: #13c1ac;
 }
 
-.profile-address{
+.profile-mini-info {
   display: flex;
-  justify-content: end;
+  justify-content: start;
 }
 
-.profile-address span{
+.profile-mini-info span {
   width: 20px;
-  margin-right: 5px;
-  text-align: right;
 }
 
-.card-body{
+.card-body {
   padding: 12px;
 }
 
+.profile-user-settings .edit-profile-btn {
+  background-color: #13c1ac;
+  width: 150px;
+  padding: 8px;
+  border-radius: 50px;
+  color: #fff;
+  border: none;
+  transition: 0.2s;
+}
+
+.profile-user-settings .edit-profile-btn:hover {
+  background-color: #0f9989;
+}
+
+.profile-user-settings .logout-btn{
+  width: 35px;
+  height: 35px;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #FD6C67;
+  text-align: center;
+  color: white;
+}
+
 @media only screen and (max-width: 1500px) {
-  .card-container{
+  .card-container {
     width: 80%;
     margin: auto;
   }
 }
 
 @media only screen and (max-width: 770px) {
-  .card-container{
+
+  .card-container {
     width: 100%;
     margin: auto;
   }
-  /* .card-body{
-    width: 100%;
-  } */
+
+  .profile {
+    padding: 2rem 0;
+    font-size: 16px;
+  }
+  .profile-user-settings {
+    margin-top: 20px;
+  }
+  
+  .profile-user-settings .edit-profile-btn {
+    width: 90%;
+  }
 }
 
 @media only screen and (max-width: 600px) {
 
-  .card-column{
+  .card-column {
     padding: 4px;
-  }
-
-  .profile{
-    font-size: 16px;
-  }
-
-  .profile-data-info {
-    text-align: right;
   }
 
   .profile-about {
@@ -146,11 +218,4 @@
     text-align: left;
   }
 
-  .profile-about .btn {
-    margin-bottom: 20px;
-  }
-
-  .profile-address {
-    justify-content: start;
-  }
 }

@@ -2,6 +2,7 @@ import { GLOBALTYPES } from '../types/globalTypes'
 import { imageUpload } from '../../utils/imageUpload'
 import { postDataAPI, getDataAPI, patchDataAPI, deleteDataAPI } from '../../utils/fetchData'
 import { validateListing } from '../../utils/validate'
+import { createNotify } from './notifyAction'
 // import { createNotify, removeNotify } from './notifyAction'
 
 export const LISTING_TYPES = {
@@ -14,7 +15,7 @@ export const LISTING_TYPES = {
 }
 
 
-export const createListing = ({productData, auth}) => async (dispatch) => {
+export const createListing = ({productData, auth, socket}) => async (dispatch) => {
     let media = []
 
     try {
@@ -25,7 +26,6 @@ export const createListing = ({productData, auth}) => async (dispatch) => {
 
         const res = await postDataAPI('listings', { productData, images: media }, auth.token)
 
-        console.log(res)
         dispatch({ 
             type: LISTING_TYPES.CREATE_LISTING, 
             payload: {...res.data.newListing, user: auth.user} 
@@ -36,13 +36,15 @@ export const createListing = ({productData, auth}) => async (dispatch) => {
         // Notify
         const msg = {
             id: res.data.newListing._id,
-            text: 'added a new listing.',
-            url: `/listing/${res.data.newListing._id}`,
-            productData, 
+            recipients: auth.user._id,
+            listing: res.data.newListing,
+            type: 'new-listing',
+            text: 'You successfully added a new listing!',
+            url: `/item/${res.data.newListing._id}`,
             image: media[0].url
         }
 
-        // dispatch(createNotify({msg, auth, socket}))
+        dispatch(createNotify({msg, auth, socket}))
 
     } catch (err) {
         console.log(err.message)
@@ -72,23 +74,25 @@ export const getListings = (token) => async (dispatch) => {
     }
 }
 
-export const updateListing = ({content, images, auth, status}) => async (dispatch) => {
+export const updateListing = ({productData, auth, socket}) => async (dispatch) => {
     let media = []
-    const imgNewUrl = images.filter(img => !img.url)
-    const imgOldUrl = images.filter(img => img.url)
+    const newImages = productData.photos.filter(img => !img.url)
+    const oldImages = productData.photos.filter(img => img.url)
 
-    if(status.content === content 
-        && imgNewUrl.length === 0
-        && imgOldUrl.length === status.images.length
-    ) return;
+    if(newImages.length === 0 && oldImages.length === 0){
+        return;
+    }
 
     try {
         dispatch({ type: GLOBALTYPES.ALERT, payload: {loading: true} })
-        if(imgNewUrl.length > 0) media = await imageUpload(imgNewUrl)
+        if(productData.photos.length > 0 && newImages.length > 0){
+            media = await imageUpload(newImages)
+            Array.prototype.push.apply(media, oldImages)
+        }else{
+            media = oldImages
+        }
 
-        const res = await patchDataAPI(`listing/${status._id}`, { 
-            content, images: [...imgOldUrl, ...media] 
-        }, auth.token)
+        const res = await patchDataAPI(`listing/${productData._id}`, { productData, images: media }, auth.token)
 
         dispatch({ type: LISTING_TYPES.UPDATE_LISTING, payload: res.data.newListing })
 
@@ -101,62 +105,7 @@ export const updateListing = ({content, images, auth, status}) => async (dispatc
     }
 }
 
-// export const likePost = ({post, auth, socket}) => async (dispatch) => {
-//     const newPost = {...post, likes: [...post.likes, auth.user]}
-//     dispatch({ type: LISTING_TYPES.UPDATE_LISTING, payload: newPost})
-
-//     socket.emit('likePost', newPost)
-
-//     try {
-//         await patchDataAPI(`post/${post._id}/like`, null, auth.token)
-        
-//         // Notify
-//         const msg = {
-//             id: auth.user._id,
-//             text: 'like your post.',
-//             recipients: [post.user._id],
-//             url: `/post/${post._id}`,
-//             content: post.content, 
-//             image: post.images[0].url
-//         }
-
-//         dispatch(createNotify({msg, auth, socket}))
-
-//     } catch (err) {
-//         dispatch({
-//             type: GLOBALTYPES.ALERT,
-//             payload: {error: err.response.data.msg}
-//         })
-//     }
-// }
-
-// export const unLikePost = ({post, auth, socket}) => async (dispatch) => {
-//     const newPost = {...post, likes: post.likes.filter(like => like._id !== auth.user._id)}
-//     dispatch({ type: LISTING_TYPES.UPDATE_LISTING, payload: newPost})
-
-//     socket.emit('unLikePost', newPost)
-
-//     try {
-//         await patchDataAPI(`post/${post._id}/unlike`, null, auth.token)
-
-//         // Notify
-//         const msg = {
-//             id: auth.user._id,
-//             text: 'like your post.',
-//             recipients: [post.user._id],
-//             url: `/post/${post._id}`,
-//         }
-//         dispatch(removeNotify({msg, auth, socket}))
-
-//     } catch (err) {
-//         dispatch({
-//             type: GLOBALTYPES.ALERT,
-//             payload: {error: err.response.data.msg}
-//         })
-//     }
-// }
-
-export const getListing = ({detailItem: detailItem, id, auth}) => async (dispatch) => {
+export const getListing = ({detailItem, id, auth}) => async (dispatch) => {
     if(detailItem.every(item => item._id !== id)){
         try {
             const res = await getDataAPI(`listing/${id}`, auth.token)
@@ -172,18 +121,22 @@ export const getListing = ({detailItem: detailItem, id, auth}) => async (dispatc
     }
 }
 
-export const deleteListing = ({post, auth, socket}) => async (dispatch) => {
-    dispatch({ type: LISTING_TYPES.DELETE_LISTING, payload: post })
+export const deleteListing = ({listing, auth, socket}) => async (dispatch) => {
+    dispatch({ type: LISTING_TYPES.DELETE_LISTING, payload: listing })
 
     try {
-        const res = await deleteDataAPI(`post/${post._id}`, auth.token)
+        const res = await deleteDataAPI(`listing/${listing._id}`, auth.token)
 
         // Notify
         const msg = {
-            id: post._id,
-            text: 'added a new listing.',
-            // recipients: res.data.newListing.user.followers,
-            url: `/listing/${post._id}`,
+
+            id: res.data.deletedListing._id,
+            recipients: auth.user._id,
+            listing: res.data.deletedListing,
+            type: 'new-listing',
+            text: 'You successfully deleted listing.',
+            url: "",
+            image: listing.photos[0].url
         }
         // dispatch(removeNotify({msg, auth, socket}))
         
@@ -195,12 +148,12 @@ export const deleteListing = ({post, auth, socket}) => async (dispatch) => {
     }
 }
 
-export const saveListing = ({post, auth}) => async (dispatch) => {
-    const newUser = {...auth.user, saved: [...auth.user.saved, post._id]}
+export const saveListing = ({listing, auth}) => async (dispatch) => {
+    const newUser = {...auth.user, saved: [...auth.user.saved, listing._id]}
     dispatch({ type: GLOBALTYPES.AUTH, payload: {...auth, user: newUser}})
 
     try {
-        await patchDataAPI(`saveListing/${post._id}`, null, auth.token)
+        await patchDataAPI(`saveListing/${listing._id}`, null, auth.token)
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,
@@ -209,12 +162,12 @@ export const saveListing = ({post, auth}) => async (dispatch) => {
     }
 }
 
-export const unSaveListing = ({post, auth}) => async (dispatch) => {
-    const newUser = {...auth.user, saved: auth.user.saved.filter(id => id !== post._id) }
+export const unSaveListing = ({listing, auth}) => async (dispatch) => {
+    const newUser = {...auth.user, saved: auth.user.saved.filter(id => id !== listing._id) }
     dispatch({ type: GLOBALTYPES.AUTH, payload: {...auth, user: newUser}})
 
     try {
-        await patchDataAPI(`unSaveListing/${post._id}`, null, auth.token)
+        await patchDataAPI(`unSaveListing/${listing._id}`, null, auth.token)
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,

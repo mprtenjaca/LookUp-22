@@ -9,11 +9,11 @@ const Message = () => {
     <div className="message-main">
       <ScreenSize/>
       <Row className="main">
-        <Col md={3} className="conversations">
+        <Col lg={3} md={5} className="conversations">
           <Conversations />
         </Col>
 
-        <Col md={9} className="chat hide-chat">
+        <Col lg={9} md={7} className="chat hide-chat">
           <span className="material-icons">question_answer</span>
         </Col>
       </Row>

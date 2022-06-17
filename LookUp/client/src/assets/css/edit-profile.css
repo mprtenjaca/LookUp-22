@@ -51,9 +51,20 @@ body {
 }
 
 .edit_profile .btn_close{
+    background-color: #fd6c67;
+    border: none;
+    color: #FFF;
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 20px;
+    right: 20px;
+    width: 80px;
+    height: 40px;
+    border-radius: 19px;
+    transition: 200ms ease;
+}
+
+.edit_profile .btn_close:hover{
+    background-color: #fa554f;
 }
 
 .edit_profile .btn-info{

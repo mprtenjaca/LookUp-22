@@ -385,7 +385,7 @@ const SearchedListings = (props) => {
           <Modal.Title>Item condition</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Row className="conditions container">
+          <Row className="conditions">
             {productCondition.map((itemCondition) => {
               return (
                 <Col

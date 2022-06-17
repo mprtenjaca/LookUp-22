@@ -10,6 +10,7 @@ import authRouter from '../server/routes/authRouter.js'
 import userRouter from '../server/routes/userRouter.js'
 import listingRouter from '../server/routes/listingRouter.js'
 import messageRouter from '../server/routes/messageRouter.js'
+import notifyRouter from '../server/routes/notifyRouter.js'
 import { Server } from 'socket.io';
 import SocketServer from './socket/socketServer.js';
 import ws from 'ws'
@@ -40,6 +41,7 @@ app.use('/api', authRouter);
 app.use('/api', userRouter);
 app.use('/api', listingRouter);
 app.use('/api', messageRouter);
+app.use('/api', notifyRouter);
 
 
 const CONNECTION_URL = process.env.MONGODB_URL;

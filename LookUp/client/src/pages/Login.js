@@ -46,7 +46,7 @@ const Login = () => {
                 <h3 className="text-info">Sign In</h3>
               </div>
               <form method="POST" onSubmit={handleSubmit} className="loginForm">
-                <div className="p-4">
+                <div className="p-4 form-input-wrapper">
                   <div className="input-group mb-3">
                     <span className="input-group-text bg-info">
                       <i className="bi bi-person-plus-fill text-white"></i>

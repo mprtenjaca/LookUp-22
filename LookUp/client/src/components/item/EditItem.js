@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Form, FormGroup, Row } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { GLOBALTYPES } from "../redux/types/globalTypes";
+import { GLOBALTYPES } from "../../redux/types/globalTypes";
 
-import "../assets/css/listing.css";
-import { categories } from "../utils/categoriesConstants";
-import { productCondition } from "../utils/dropdownConstants";
-import camera from "../assets/images/camera.ico";
-import { checkImage, imageUpload } from "../utils/imageUpload";
-import { createListing } from "../redux/actions/listingAction";
-import { validateListing } from "../utils/validate";
-import { socket } from "../redux/socket";
+import "../../assets/css/listing.css"
+import camera from "../../assets/images/camera.ico";
 
-const NewListing = () => {
-  const dispatch = useDispatch();
-  const { auth, alert } = useSelector((state) => state);
+import { categories } from "../../utils/categoriesConstants";
+import { checkImage } from "../../utils/imageUpload";
+import { validateListing } from "../../utils/validate";
+import { createListing, getListing, updateListing } from "../../redux/actions/listingAction";
+import { socket } from "../../redux/socket";
+import { productCondition } from "../../utils/dropdownConstants";
+import { useHistory, useParams } from "react-router";
+
+const EditItem = () => {
+  const dispatch = useDispatch()
+  const history = useHistory()
+  const { id } = useParams()
+  const { auth, detailItem, alert } = useSelector((state) => state)
 
   const initialState = {
     name: "",
@@ -26,12 +30,12 @@ const NewListing = () => {
     price: "",
     city: "",
     postalCode: "",
-    photos: [],
-    user: auth.user._id,
+    photos: []
   };
 
   const [currentCategory, setCurrentCategory] = useState([]);
   const [productData, setProductData] = useState(initialState);
+  const [oldImages, setOldImages] = useState([])
   const [avatar, setAvatar] = useState("");
 
   const {
@@ -47,6 +51,19 @@ const NewListing = () => {
     photos,
     user,
   } = productData;
+
+
+  useEffect(() => {
+
+    dispatch(getListing({detailItem, id, auth}))
+
+    if(detailItem.length > 0){
+      const newArr = detailItem.filter(item => item._id === id)
+      setOldImages(newArr.photos)
+      setProductData(newArr[0])
+    }
+
+  }, [detailItem, dispatch, id, auth])
 
   const handleChangeInput = (e) => {
     const { name, value } = e.target;
@@ -79,9 +96,9 @@ const NewListing = () => {
       photosCopy[index] = file;
     }
 
-    // if((index + 1) > photosCopy.length && photosCopy.length != 0){
-    //   photosCopy[(index + 1) - photosCopy.length] = file
-    // }
+    if((index + 1) > photosCopy.length && photosCopy.length != 0){
+      photosCopy[(index + 1) - photosCopy.length] = file
+    }
 
     setProductData({ ...productData, photos: photosCopy });
   };
@@ -103,12 +120,16 @@ const NewListing = () => {
       })
     }
 
-    dispatch(createListing({ productData, auth, socket }));
-    setProductData(initialState)
+    dispatch(updateListing({ productData, auth, socket }));
+    history.push({
+        pathname: '/profile/' + auth.user._id,
+        state: {from: history.location.pathname}
+    })
   };
 
   return (
     <>
+    {console.log(productData)}
       <div className="new-listing-container">
         <Form onSubmit={handleSubmit}>
           <Row>
@@ -259,7 +280,7 @@ const NewListing = () => {
                 >
                   {photos[0] ? (
                     <img
-                      src={photos[0] ? URL.createObjectURL(photos[0]) : camera}
+                    src={photos[0] ? photos[0].url ? photos[0].url : URL.createObjectURL(photos[0]) : camera}
                       style={
                         photos[0]
                           ? { objectFit: "cover" }
@@ -289,7 +310,7 @@ const NewListing = () => {
                 >
                   {photos[1] ? (
                     <img
-                      src={photos[1] ? URL.createObjectURL(photos[1]) : camera}
+                      src={photos[1] ? photos[1].url ? photos[1].url : URL.createObjectURL(photos[1]) : camera}
                       style={
                         photos[1]
                           ? { objectFit: "cover" }
@@ -318,8 +339,8 @@ const NewListing = () => {
                 >
                   {photos[2] ? (
                     <img
-                      src={photos[2] ? URL.createObjectURL(photos[2]) : camera}
-                      style={
+                    src={photos[2] ? photos[2].url ? photos[2].url : URL.createObjectURL(photos[2]) : camera}
+                    style={
                         photos[2]
                           ? { objectFit: "cover" }
                           : { objectFit: "contain" }
@@ -347,8 +368,8 @@ const NewListing = () => {
                 >
                   {photos[3] ? (
                     <img
-                      src={photos[3] ? URL.createObjectURL(photos[3]) : camera}
-                      style={
+                    src={photos[3] ? photos[3].url ? photos[3].url : URL.createObjectURL(photos[3]) : camera}
+                    style={
                         photos[3]
                           ? { objectFit: "cover" }
                           : { objectFit: "contain" }
@@ -415,4 +436,4 @@ const NewListing = () => {
   );
 };
 
-export default NewListing;
+export default EditItem;

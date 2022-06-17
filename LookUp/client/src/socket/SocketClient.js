@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GLOBALTYPES } from '../redux/types/globalTypes'
 import { MESS_TYPES } from '../redux/actions/messageAction'
+import { NOTIFY_TYPES } from '../redux/actions/notifyAction'
 
 
 const spawnNotification = (body, icon, url, title) => {
@@ -18,7 +19,7 @@ const spawnNotification = (body, icon, url, title) => {
 }
 
 const SocketClient = ({socket}) => {
-    const { auth } = useSelector(state => state)
+    const { auth, notify } = useSelector(state => state)
     const dispatch = useDispatch()
 
     // joinUser
@@ -41,6 +42,23 @@ const SocketClient = ({socket}) => {
         })
 
         return () => socket.off('addMessageToClient')
+    },[socket, dispatch])
+
+    // Notification
+    useEffect(() => {
+        socket.on('createNotifyToClient', msg =>{
+            dispatch({type: NOTIFY_TYPES.CREATE_NOTIFY, payload: msg})
+        })
+
+        return () => socket.off('createNotifyToClient')
+    },[socket, dispatch])
+
+    useEffect(() => {
+        socket.on('removeNotifyToClient', msg =>{
+            dispatch({type: NOTIFY_TYPES.REMOVE_NOTIFY, payload: msg})
+        })
+
+        return () => socket.off('removeNotifyToClient')
     },[socket, dispatch])
 
 

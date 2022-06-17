@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { getConversations } from "../../redux/actions/messageAction";
 import ItemCard from "../user/ItemCard";
-import UserCard from "../user/UserCard";
 
 const Conversations = () => {
   const dispatch = useDispatch();
-  const { auth, alert, messageRed } = useSelector((state) => state);
+  const { auth, alert, messageRed, notify } = useSelector((state) => state);
 
   const { id } = useParams();
   const pageEnd = useRef();
@@ -19,7 +18,6 @@ const Conversations = () => {
     }
     
     dispatch(getConversations({ auth }));
-    console.log("UPDATE?")
   }, [dispatch, auth, messageRed.firstLoad]);
 
   // Load More
@@ -40,17 +38,15 @@ const Conversations = () => {
   useEffect(() => {
     if(messageRed.resultUsers >= (page - 1) * 9 && page > 1){
         dispatch(getConversations({auth, page}))
-        console.log("UPDATE 1 ?")
     }
   },[messageRed.resultUsers, page, auth, dispatch])
 
   return (
-    <div className="conversations-list">
-      {console.log(messageRed.users)}
+    <div className="conversations-list disable-select">
       <h3>Inbox</h3>
       {messageRed.users.map((user) => (
         <div key={user.listing._id} className="conversation-user-card">
-          <ItemCard user={user} item={user.listing} />
+          <ItemCard user={user} item={user.listing} showMsg={true} />
         </div>
       ))}
     

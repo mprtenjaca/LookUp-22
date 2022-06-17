@@ -6,7 +6,7 @@ import { getProfileUser } from "../../redux/actions/profileAction";
 
 const Profile = () => {
 
-    const { profile, auth } = useSelector(state => state)
+    const { auth, profile, alert } = useSelector(state => state)
     const dispatch = useDispatch()
     const { id } = useParams()
     const [saveTab, setSaveTab] = useState(false)
@@ -20,7 +20,7 @@ const Profile = () => {
 
     return (
         <div>
-            <ProfileInfo auth={auth} profile={profile} dispatch={dispatch} id={id} />
+            <ProfileInfo auth={auth} profile={profile} alert={alert} dispatch={dispatch} id={id} />
         </div>
     )
 }

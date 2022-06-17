@@ -12,7 +12,7 @@ const UserCard = ({ user, showMsg }) => {
               <a className="d-flex align-items-center" href={`/profile/${user._id}`}>
                 <img src={user.avatar} alt="avatar" className="big-avatar" />
                 <div className="ml-1">
-                  <span className="d-block user-name">
+                  <span className="d-block user-name show_hide_user_name_mobile">
                     {user.firstName} {user.lastName}
                   </span>
                 </div>

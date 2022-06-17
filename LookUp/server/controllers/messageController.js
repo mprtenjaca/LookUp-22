@@ -10,7 +10,7 @@ class APIfeatures {
 
     paginating(){
         const page = this.queryString.page * 1 || 1
-        const limit = this.queryString.limit * 1 || 9
+        const limit = this.queryString.limit * 1 || 25
         const skip = (page - 1) * limit
         this.query = this.query.skip(skip).limit(limit)
         return this;
@@ -23,14 +23,14 @@ const MessageController = {
             const { sender, recipient, listing, text } = req.body
             console.log("sender: ", sender)
             console.log("recipient: ", recipient)
-            console.log("listing: ", listing)
+            console.log("listing: ", listing._id)
             if(!recipient || (!text.trim())){
                 return;
             }
 
             const test = await Conversations.find({
                 $and: [
-                    {listing: listing},
+                    {listing: listing._id},
                     {$or: [
                         {recipients: [sender, recipient]},
                         {recipients: [recipient, sender]}
@@ -43,7 +43,7 @@ const MessageController = {
 
             const newConversation = await Conversations.findOneAndUpdate({
                 $and: [
-                    {listing: listing},
+                    {listing: listing._id},
                     {$or: [
                         {recipients: [sender, recipient]},
                         {recipients: [recipient, sender]}
@@ -114,10 +114,11 @@ const MessageController = {
                         {sender: req.params.id, recipient: req.user._id}
                     ]},
                 ],
-            }), req.query.limit).paginating()
+            }), req.query ).paginating()
 
             const messages = await features.query.sort('-createdAt')
-
+            .populate('listing', 'name photos category price currency user')
+            
             res.json({
                 messages,
                 result: messages.length

@@ -12,6 +12,7 @@ import searchReducer from "./reducers/searchReducer";
 import messageReducer from "./reducers/messageReducer";
 import socketReducer from "./reducers/socketReducer";
 import utilReducer from "./reducers/utilReducer";
+import notifyReducer from "./reducers/notifyReducer";
 
 const store = configureStore(
   { reducer: {
@@ -26,6 +27,7 @@ const store = configureStore(
       messageRed: messageReducer,
       socket: socketReducer,
       util: utilReducer,
+      notify: notifyReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false

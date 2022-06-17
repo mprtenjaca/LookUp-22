@@ -9,7 +9,7 @@ class APIfeatures {
 
   paginating() {
     const page = this.queryString.page * 1 || 1;
-    const limit = this.queryString.limit * 1 || 9;
+    const limit = this.queryString.limit * 1 || 25;
     const skip = (page - 1) * limit;
     this.query = this.query.skip(skip).limit(limit);
     return this;
@@ -18,16 +18,14 @@ class APIfeatures {
 
 const listingController = {
   searchListings: async (req, res) => {
-
-    console.log(req.query)
+    console.log(req.query);
 
     try {
-
-      let listings = await Posts.find({$or: 
-        [{name: { $regex : new RegExp(req.query.keywords, "i") }},
-        {description: { $regex : new RegExp(req.query.keywords, "i") }}]
-      }).limit(15);
-
+      let listings = await Posts.find({ 
+        $or: [
+          { name: { $regex: new RegExp(req.query.keywords, "i") } }, 
+          { description: { $regex: new RegExp(req.query.keywords, "i") } 
+        }] }).limit(15);
 
       // if(req.query.conditions){
       //   const filteredList = listings.filter((item) => {
@@ -39,28 +37,15 @@ const listingController = {
       //   listings = filteredList
       // }
 
-      res.json({listings})
-      
+      res.json({ listings });
     } catch (err) {
-      console.log(err)
-      return res.status(500).json({msg: err.message})
+      console.log(err);
+      return res.status(500).json({ msg: err.message });
     }
   },
   createPost: async (req, res) => {
     try {
-      const {
-        photos,
-        name,
-        description,
-        category,
-        subCategory,
-        condition,
-        currency,
-        price,
-        city,
-        postalCode,
-        user,
-      } = req.body.productData;
+      const { photos, name, description, category, subCategory, condition, currency, price, city, postalCode, user } = req.body.productData;
       const { images } = req.body;
 
       console.log(req.body);
@@ -121,19 +106,7 @@ const listingController = {
   },
   updatePost: async (req, res) => {
     try {
-      const {
-        photos,
-        name,
-        description,
-        category,
-        subCategory,
-        condition,
-        currency,
-        price,
-        city,
-        postalCode,
-        user,
-      } = req.body.productData;
+      const { photos, name, description, category, subCategory, condition, currency, price, city, postalCode, user } = req.body.productData;
       const { images } = req.body;
 
       const listing = await Posts.findOneAndUpdate(
@@ -174,12 +147,10 @@ const listingController = {
   },
   getCategoryListings: async (req, res) => {
     try {
-      
-      const listings = await Posts.find({category: req.params.id})
-      .populate("user", "avatar firstName lastName");
-      
-      if(listings.length === 0){
-        return res.status(200).json({msg: "No listings in this category"})
+      const listings = await Posts.find({ category: req.params.id }).populate("user", "avatar firstName lastName");
+
+      if (listings.length === 0) {
+        return res.status(200).json({ msg: "No listings in this category" });
       }
 
       res.json({
@@ -197,9 +168,9 @@ const listingController = {
         _id: req.params.id,
         likes: req.user._id,
       });
-      if (post.length > 0)
+      if (post.length > 0) {
         return res.status(400).json({ msg: "You liked this post." });
-
+      }
       const like = await Posts.findOneAndUpdate(
         { _id: req.params.id },
         {
@@ -208,8 +179,9 @@ const listingController = {
         { new: true }
       );
 
-      if (!like)
+      if (!like) {
         return res.status(400).json({ msg: "This post does not exist." });
+      }
 
       res.json({ msg: "Liked Post!" });
     } catch (err) {
@@ -226,9 +198,9 @@ const listingController = {
         { new: true }
       );
 
-      if (!like)
+      if (!like) {
         return res.status(400).json({ msg: "This post does not exist." });
-
+      }
       res.json({ msg: "UnLiked Post!" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
@@ -236,29 +208,24 @@ const listingController = {
   },
   getUserPosts: async (req, res) => {
     try {
-      const features = new APIfeatures(
-        Posts.find({ user: req.params.id }),
-        req.query
-      ).paginating();
+      const features = new APIfeatures(Posts.find({ user: req.params.id }), req.query).paginating();
       const listings = await features.query.sort("-createdAt");
 
       res.json({
         listings,
         result: listings.length,
       });
-
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
   },
   getPost: async (req, res) => {
     try {
-      
-      const item = await Posts.findById(req.params.id)
-      .populate("user", "avatar firstName lastName");
+      const item = await Posts.findById(req.params.id).populate("user", "avatar firstName lastName");
 
-      if (!item)
+      if (!item) {
         return res.status(400).json({ msg: "This item does not exist." });
+      }
 
       res.json({
         item,
@@ -273,10 +240,7 @@ const listingController = {
 
       const num = req.query.num || 9;
 
-      const posts = await Posts.aggregate([
-        { $match: { user: { $nin: newArr } } },
-        { $sample: { size: Number(num) } },
-      ]);
+      const posts = await Posts.aggregate([{ $match: { user: { $nin: newArr } } }, { $sample: { size: Number(num) } }]);
 
       return res.json({
         msg: "Success!",
@@ -287,18 +251,20 @@ const listingController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  deletePost: async (req, res) => {
+  deleteListing: async (req, res) => {
     try {
-      const post = await Posts.findOneAndDelete({
+      const deletedListing = await Posts.findOneAndDelete({
         _id: req.params.id,
         user: req.user._id,
       });
-      await Comments.deleteMany({ _id: { $in: post.comments } });
+
+      console.log("DELETED: ", deletedListing)
+      // await Comments.deleteMany({ _id: { $in: deletedListing.comments } });
 
       res.json({
         msg: "Deleted Post!",
-        newPost: {
-          ...post,
+        deletedListing: {
+          ...deletedListing,
           user: req.user,
         },
       });
@@ -312,9 +278,9 @@ const listingController = {
         _id: req.user._id,
         saved: req.params.id,
       });
-      if (user.length > 0)
-        return res.status(400).json({ msg: "You saved this post." });
-
+      if (user.length > 0) {
+        return res.status(400).json({ msg: "You saved this listing." });
+      }
       const save = await Users.findOneAndUpdate(
         { _id: req.user._id },
         {
@@ -323,10 +289,10 @@ const listingController = {
         { new: true }
       );
 
-      if (!save)
+      if (!save) {
         return res.status(400).json({ msg: "This user does not exist." });
-
-      res.json({ msg: "Saved Post!" });
+      }
+      res.json({ msg: "Saved Listing!" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -341,15 +307,18 @@ const listingController = {
         { new: true }
       );
 
-      if (!save)
+      if (!save) {
         return res.status(400).json({ msg: "This user does not exist." });
-
-      res.json({ msg: "unSaved Post!" });
+      }
+      res.json({ msg: "Unsaved Listing!" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getSavePosts: async (req, res) => {
+  getSavedListings: async (req, res) => {
+
+    console.log(req.user)
+    console.log(req.query)
     try {
       const features = new APIfeatures(
         Posts.find({
@@ -358,11 +327,11 @@ const listingController = {
         req.query
       ).paginating();
 
-      const savePosts = await features.query.sort("-createdAt");
+      const savedListings = await features.query.sort("-createdAt");
 
       res.json({
-        savePosts,
-        result: savePosts.length,
+        savedListings,
+        result: savedListings.length,
       });
     } catch (err) {
       return res.status(500).json({ msg: err.message });

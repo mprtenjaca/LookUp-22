@@ -1,3 +1,16 @@
 .loginCenter {
     margin-top: 200px;
 }
+
+@media only screen and (max-width: 400px) {
+
+    .loginCenter .bg-light{
+        padding: 0 !important;
+    }
+
+    .loginCenter .form-input-wrapper{
+        margin-top: 30px;
+        padding: 0 !important;
+    }
+
+}

@@ -1,5 +1,6 @@
 import { GLOBALTYPES, DeleteData } from '../types/globalTypes'
 import { postDataAPI, getDataAPI, deleteDataAPI } from '../../utils/fetchData'
+import { createNotify, NOTIFY_TYPES } from './notifyAction'
 
 export const MESS_TYPES = {
     ADD_USER: 'ADD_USER',
@@ -17,12 +18,24 @@ export const MESS_TYPES = {
 export const addMessage = ({msg, auth, socket}) => async (dispatch) =>{
 
     dispatch({type: MESS_TYPES.ADD_MESSAGE, payload: msg})
-    console.log("NOVA PORUKA: ", msg)
+    // dispatch({type: NOTIFY_TYPES.CREATE_NOTIFY, payload: msg})
+
     const { _id, avatar, firstName, lastName, username } = auth.user
     socket.emit('addMessage', {...msg, user: { _id, avatar, firstName, lastName, username } })
 
+    const notifyMsg = {
+        id: auth.user._id,
+        recipients: msg.recipient,
+        listing: msg.listing,
+        type: "message",
+        text: msg.text,
+        // url: `/message/${id}?itemId=${urlItemId}`
+      }; 
+
     try {
         await postDataAPI('message', msg, auth.token)
+        dispatch(createNotify({ msg: notifyMsg, auth, socket }))
+
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }
@@ -56,24 +69,25 @@ export const getMessages = ({auth, id, itemID, page = 1}) => async (dispatch) =>
         const res = await getDataAPI(`message/${id}?itemId=${itemID}&limit=${page * 25}`, auth.token)
 
         const newData = {...res.data, messages: res.data.messages.reverse()}
-        let listingId = null
-        if(newData){
-            listingId = newData.messages[0].listing
-        }
+        const listingId = newData ? newData.messages[0].listing : null
+
         dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page, listing: listingId}})
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }
 }
 
-export const loadMoreMessages = ({auth, id, page = 1}) => async (dispatch) => {
+export const loadMoreMessages = ({auth, id, itemID, page = 1}) => async (dispatch) => {
     try {
-        const res = await getDataAPI(`message/${id}?limit=${page * 25}`, auth.token)
-        const newData = {...res.data, messages: res.data.messages.reverse()}
+        const res = await getDataAPI(`message/${id}?itemId=${itemID}&limit=${page * 25}`, auth.token)
 
-        dispatch({type: MESS_TYPES.UPDATE_MESSAGES, payload: {...newData, _id: id, page}})
+        const newData = {...res.data, messages: res.data.messages.reverse()}
+        const listingId = newData ? newData.messages[0].listing : null
+        
+        dispatch({type: MESS_TYPES.UPDATE_MESSAGES, payload: {...newData, _id: id, page, listing: listingId}})
     } catch (err) {
-        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
+        console.log(err)
+        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err}})
     }
 }
 

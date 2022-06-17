@@ -15,7 +15,7 @@ const Register = () => {
         lastName: '', 
         username: '', 
         email: '', 
-        oib: '',
+        oib: null,
         contactPhone: '',
         street: '', 
         streetNumber: '', 
@@ -32,7 +32,9 @@ const Register = () => {
     const [typeCfPass, setTypeCfPass] = useState(false)
 
     useEffect(() => {
-        if(auth.token) history.push("/")
+        if(auth.token){ 
+          history.push("/")
+        }
     }, [auth.token, history])
 
     
@@ -56,7 +58,7 @@ const Register = () => {
                 <h3 className="text-info">Registracija</h3>
               </div>
               <form method="POST" onSubmit={handleSubmit} className="loginForm">
-                <div className="p-4">
+                <div className="p-4 form-input-wrapper">
                   <div className="input-group mb-3">
                     <span className="input-group-text bg-info">
                       <i className="bi bi-person-plus-fill text-white"></i>
@@ -119,6 +121,47 @@ const Register = () => {
                       placeholder="Lozinka"
                       name="password"
                       value={password}
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <span className="input-group-text bg-info">
+                      <i className="bi bi-person-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Contact phone"
+                      name="contactPhone"
+                      value={contactPhone}
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <span className="input-group-text bg-info">
+                      <i className="bi bi-person-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="City"
+                      name="city"
+                      value={city}
+                      onChange={handleChangeInput}
+                    />
+                  </div>
+                  <div className="input-group mb-3">
+                    <span className="input-group-text bg-info">
+                      <i className="bi bi-person-plus-fill text-white"></i>
+                    </span>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Postal code"
+                      name="postalCode"
+                      minLength={5}
+                      maxLength={5}
+                      value={postalCode}
                       onChange={handleChangeInput}
                     />
                   </div>

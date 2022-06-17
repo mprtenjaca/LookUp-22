@@ -27,8 +27,7 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     oib: {
-        type: String,
-        default: ''
+        type: String
     },
     street: {
         type: String,

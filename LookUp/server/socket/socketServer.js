@@ -11,7 +11,7 @@ const addUser = (userId, socketId) => {
     !users.some(user => user.id === userId) && 
     users.push({id: userId, socketId: socketId})
 
-    // console.log("USERS: ", users)
+    console.log("USERS: ", users)
 }
 
 const SocketServer = (socket) => {
@@ -28,9 +28,26 @@ const SocketServer = (socket) => {
     // Message
     socket.on('addMessage', msg => {
         const user = users.find(user => user.id === msg.recipient)
-        console.log("SOCKET PORUKA: ", msg)
-        console.log(users.find(user => user.id === msg.recipient))
         user && socket.to(user.socketId).emit('addMessageToClient', msg)
+    })
+
+    // Notification
+    socket.on('createNotify', msg => {
+        const client = users.find(user => msg.recipients.includes(user.id))
+
+        console.log(msg.recipients.includes(msg.user.id))
+        if(msg.recipients.includes(msg.user.id)){
+            socket.emit('test', msg)
+        }else{
+            client && socket.to(`${client.socketId}`).emit('createNotifyToClient', msg)
+        }
+        
+    })
+
+    socket.on('removeNotify', msg => {
+        const client = users.find(user => msg.recipients.includes(user.id))
+        client && socket.to(`${client.socketId}`).emit('removeNotifyToClient', msg)
+
     })
 }
 
