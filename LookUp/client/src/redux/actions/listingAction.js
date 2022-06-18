@@ -2,7 +2,7 @@ import { GLOBALTYPES } from '../types/globalTypes'
 import { imageUpload } from '../../utils/imageUpload'
 import { postDataAPI, getDataAPI, patchDataAPI, deleteDataAPI } from '../../utils/fetchData'
 import { validateListing } from '../../utils/validate'
-import { createNotify } from './notifyAction'
+import { createNotify, removeNotify } from './notifyAction'
 // import { createNotify, removeNotify } from './notifyAction'
 
 export const LISTING_TYPES = {
@@ -168,6 +168,36 @@ export const unSaveListing = ({listing, auth}) => async (dispatch) => {
 
     try {
         await patchDataAPI(`unSaveListing/${listing._id}`, null, auth.token)
+    } catch (err) {
+        dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: {error: err.response.data.msg}
+        })
+    }
+}
+
+export const updateListingStatus = ({listing, auth}) => async (dispatch) => {
+    dispatch({ type: GLOBALTYPES.ALERT, payload: {loading: true} })
+
+    try {
+        const res = await patchDataAPI(`updateListingStatus/${listing._id}`, null, auth.token)
+        dispatch({ type: LISTING_TYPES.UPDATE_LISTING, payload: res.data.updatedListing })
+
+        dispatch({ type: GLOBALTYPES.ALERT, payload: {success: res.data.msg} })
+    } catch (err) {
+        dispatch({
+            type: GLOBALTYPES.ALERT,
+            payload: {error: err.response.data.msg}
+        })
+    }
+}
+
+export const deleteSavedListing = ({listing, auth}) => async (dispatch) => {
+    const newUser = {...auth.user, saved: auth.user.saved.filter(id => id !== listing._id) }
+    dispatch({ type: GLOBALTYPES.AUTH, payload: {...auth, user: newUser}})
+
+    try {
+        await patchDataAPI(`deleteSavedListing/${listing._id}`, null, auth.token)
     } catch (err) {
         dispatch({
             type: GLOBALTYPES.ALERT,

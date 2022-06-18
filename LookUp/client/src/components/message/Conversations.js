@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { getConversations } from "../../redux/actions/messageAction";
 import ItemCard from "../user/ItemCard";
 
@@ -9,6 +9,7 @@ const Conversations = () => {
   const { auth, alert, messageRed, notify } = useSelector((state) => state);
 
   const { id } = useParams();
+  const history = useHistory()
   const pageEnd = useRef();
   const [page, setPage] = useState(0);
 
@@ -45,6 +46,7 @@ const Conversations = () => {
     <div className="conversations-list disable-select">
       <h3>Inbox</h3>
       {messageRed.users.map((user) => (
+        messageRed.listing &&
         <div key={user.listing._id} className="conversation-user-card">
           <ItemCard user={user} item={user.listing} showMsg={true} />
         </div>

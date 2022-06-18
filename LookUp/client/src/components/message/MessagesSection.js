@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Modal } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { addMessage, getMessages, loadMoreMessages } from "../../redux/actions/messageAction";
+import { addMessage, deleteConversation, getMessages, loadMoreMessages } from "../../redux/actions/messageAction";
 import { createNotify, isReadNotify } from "../../redux/actions/notifyAction";
 import { socket } from "../../redux/socket";
 import { GLOBALTYPES } from "../../redux/types/globalTypes";
@@ -12,7 +13,7 @@ import UserCard from "../user/UserCard";
 import MsgDisplay from "./MsgDisplay";
 
 const MessagesSection = () => {
-  const { auth, messageRed, notify } = useSelector((state) => state);
+  const { auth, messageRed, notify, alert } = useSelector((state) => state);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -30,6 +31,11 @@ const MessagesSection = () => {
   const [page, setPage] = useState(0);
   const [isLoadMore, setIsLoadMore] = useState(0);
 
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   // Get latest messages
   useEffect(() => {
     const url = new URLSearchParams(history.location.search);
@@ -37,15 +43,15 @@ const MessagesSection = () => {
     const urlItemId = url.get("itemId");
 
     const getMessagesData = async () => {
-      if (messageRed.data.every((item) => item.listing._id !== urlItemId)) {
-        dispatch(getMessages({ auth, id, itemID: urlItemId }));
+      if (messageRed.data.every((item) => item.listing && item.listing._id !== urlItemId)) {
+        dispatch(getMessages({ auth, id, itemID: urlItemId, listing: messageRed.listing ? messageRed.listing : null }));
         setTimeout(() => {
           refDisplay.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }, 50);
       }
     };
     getMessagesData();
-  }, [messageRed.data, data, id, history.location.search]);
+  }, [messageRed.listing, data, id, history.location.search]);
 
   // Get latest message after socket response
   useEffect(() => {
@@ -53,7 +59,7 @@ const MessagesSection = () => {
     setItemID(url.get("itemId"));
     const urlItemId = url.get("itemId");
 
-    const newData = messageRed.data.find((item) => item.listing._id === urlItemId);
+    const newData = messageRed.data.find((item) => item.listing && item.listing._id === urlItemId);
     if (newData) {
       setData(newData.messages);
       setResult(newData.result);
@@ -62,11 +68,10 @@ const MessagesSection = () => {
     }
 
     notify.data.filter((item) => {
-      if(item.type === "message" && item.recipients === auth.user._id && item.isRead === false){
-        dispatch(isReadNotify({msg: item, auth}))
+      if (item.type === "message" && item.recipients === auth.user._id && item.isRead === false) {
+        dispatch(isReadNotify({ msg: item, auth }));
       }
-    })
-
+    });
   }, [messageRed.data.listing, messageRed.data, messageRed.location, id, data, history.location.search]);
 
   // Get user
@@ -78,10 +83,14 @@ const MessagesSection = () => {
 
       const url = new URLSearchParams(history.location.search);
       const urlItemId = url.get("itemId");
-      const newUser = messageRed.users.find((user) => user._id === id && user.listing._id === urlItemId);
+      const newUser = messageRed.users.find((user) => user._id === id && user.listing && user.listing._id === urlItemId);
 
       if (newUser) {
         setUser(newUser);
+      }
+
+      if (id && !newUser) {
+        history.push("/message");
       }
     }
   }, [messageRed.users, history.location.search, id]);
@@ -109,7 +118,7 @@ const MessagesSection = () => {
 
     if (isLoadMore > 1) {
       if (result >= page * 25) {
-        dispatch(loadMoreMessages({ auth, id, itemID: urlItemId, page: page + 1 }));
+        dispatch(loadMoreMessages({ auth, id, itemID: urlItemId, listing: messageRed.listing ? messageRed.listing : null, page: page + 1 }));
         setIsLoadMore(1);
       }
     }
@@ -118,9 +127,6 @@ const MessagesSection = () => {
   // Send message
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const url = new URLSearchParams(history.location.search);
-    const urlItemId = url.get("itemId");
 
     if (!text.trim()) {
       return;
@@ -134,15 +140,24 @@ const MessagesSection = () => {
       createdAt: new Date().toISOString(),
     };
 
+    console.log(msg.listing)
+
     setData([...data, msg]);
     dispatch(addMessage({ msg, auth, socket }));
     setText("");
   };
 
+  const handleDeleteConversation = (e) => {
+    const url = new URLSearchParams(history.location.search);
+    const itemID = url.get("itemId");
+
+    dispatch(deleteConversation({ auth, id, itemID }));
+    handleClose();
+  };
+
   return (
     <>
       <ScreenSize />
-      {/* {auth.token && <SocketClient socket={socket} />} */}
       <div className="message_header">
         <span className="material-icons-outlined back-action" onClick={() => history.push("/message")}>
           keyboard_backspace
@@ -156,6 +171,21 @@ const MessagesSection = () => {
             <></>
           )}
           <UserCard user={user} />
+        </div>
+        <div className="edit-item-btn edit-message-section">
+          <ul className="navbar-nav flex-row disable-select">
+            <li className="nav-item dropdown">
+              <span className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span className="material-icons-outlined nav-item dropdown item-dropdown-options">more_vert</span>
+              </span>
+
+              <div className="dropdown-menu item-dropdown-menu" aria-labelledby="navbarDropdown">
+                <div className="dropdown-menu-item" onClick={handleShow}>
+                  <span className="material-icons-outlined nav-item dropdown">delete</span>Delete conversation
+                </div>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
       <div className="chat_container">
@@ -178,7 +208,9 @@ const MessagesSection = () => {
               )}
             </div>
           ))}
+          <div className="sold-listing-message">{itemDetail.isSold ? <span>This item is sold.</span> : ""}</div>
         </div>
+        
       </div>
 
       <form className="chat_input" onSubmit={handleSubmit}>
@@ -187,6 +219,21 @@ const MessagesSection = () => {
           near_me
         </button>
       </form>
+
+      <Modal show={show} onHide={handleClose} className="confirmation-delete-dialog">
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Conversation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this conversation?</Modal.Body>
+        <Modal.Footer>
+          <button className="close-btn" onClick={handleClose}>
+            Close
+          </button>
+          <button className="delete-btn" onClick={handleDeleteConversation}>
+            Delete
+          </button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

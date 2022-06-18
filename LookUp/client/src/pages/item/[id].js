@@ -13,7 +13,7 @@ const Item = () => {
 
     const { auth, detailItem } = useSelector(state => state)
     const [item, setItem] = useState([])
-    const [itemUser, setItemUser] = useState([])
+    const [itemUser, setItemUser] = useState()
 
     useEffect(() => {
 
@@ -27,15 +27,9 @@ const Item = () => {
     }, [detailItem, dispatch, id, auth])
 
   return (
-    <ItemInfo item={item} user={auth.user}/>
-    // <div className='item'>
-    //   {
-    //     item.map(item => {
-    //       <ItemInfo key={item._id} item={item}/>
-    //     })
-    //   }
-        
-    // </div>
+    <>
+      <ItemInfo item={item} user={auth.user}/>
+    </>
   )
 }
 

@@ -1,5 +1,5 @@
 import { MESS_TYPES } from "../actions/messageAction";
-import { EditData, DeleteData } from "../types/globalTypes";
+import { EditData, DeleteData, DeleteConversationUser, DeleteConversationData } from "../types/globalTypes";
 
 const initialState = {
   users: [],
@@ -12,7 +12,9 @@ const initialState = {
 const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case MESS_TYPES.ADD_USER:
-      if (state.users.every((item) => item._id !== action.payload._id && item.listing._id !== action.payload.listing._id)) {
+      console.log(action.payload.listing._id)
+      console.log(state.users)
+      if (state.users.every((item) => item.listing._id !== action.payload.listing._id)) {
         return {
           ...state,
           users: [action.payload, ...state.users],
@@ -30,13 +32,13 @@ const messageReducer = (state = initialState, action) => {
                 ...item,
                 messages: [...item.messages, action.payload],
                 result: item.result + 1,
-                listing: action.payload.listing,
+                listing: action.payload.listing
               }
             : item
         ),
         listing: action.payload.listing,
         users: state.users.map((user) =>
-          (user._id === action.payload.recipient || user._id === action.payload.sender) && (user.listing._id === action.payload.listing._id)
+          (user._id === action.payload.recipient || user._id === action.payload.sender) && (user.listing && user.listing._id === action.payload.listing._id)
             ? {
                 ...user,
                 text: action.payload.text,
@@ -71,8 +73,8 @@ const messageReducer = (state = initialState, action) => {
     case MESS_TYPES.DELETE_CONVERSATION:
       return {
         ...state,
-        users: DeleteData(state.users, action.payload),
-        data: DeleteData(state.data, action.payload),
+        users: DeleteConversationUser(state.users, action.payload),
+        data: DeleteConversationData(state.data, action.payload),
       };
     case MESS_TYPES.CHECK_ONLINE_OFFLINE:
       return {

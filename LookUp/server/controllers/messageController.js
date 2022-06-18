@@ -84,7 +84,7 @@ const MessageController = {
 
             const conversations = await features.query.sort('-updatedAt')
             .populate('recipients', 'avatar username firstName lastName')
-            .populate('listing', 'name photos category user')
+            .populate('listing', 'name photos category price currency isSold user')
 
             // console.log("CONVOS: ", conversations)
 
@@ -98,11 +98,6 @@ const MessageController = {
         }
     },
     getMessages: async (req, res) => {
-
-        console.log("QUERY: ",req.query.itemId)
-        console.log("USER: ",req.user._id)
-        console.log("PARAMS: ",req.params.id)
-
         try {
 
             const features = new APIfeatures(Messages.find({
@@ -117,7 +112,7 @@ const MessageController = {
             }), req.query ).paginating()
 
             const messages = await features.query.sort('-createdAt')
-            .populate('listing', 'name photos category price currency user')
+            .populate('listing', 'name photos category price currency isSold user')
             
             res.json({
                 messages,
@@ -138,17 +133,30 @@ const MessageController = {
         }
     },
     deleteConversation: async (req, res) => {
+
+        let deletedConversation = {}
         try {
-            const newConver = await Conversations.findOneAndDelete({
-                $or: [
-                    {recipients: [req.user._id, req.params.id]},
-                    {recipients: [req.params.id, req.user._id]}
-                ]
-            })
-            await Messages.deleteMany({conversation: newConver._id})
+            if(req.user._id.toString() === req.params.id){
+                deletedConversation = await Conversations
+                .findOneAndDelete({listing: req.query.itemId})
+            }else{
+                deletedConversation = await Conversations.findOneAndDelete({
+                    $and: [
+                        {listing: req.query.itemId},
+                        {$or: [
+                            {recipients: [req.user._id, req.params.id]},
+                            {recipients: [req.params.id, req.user._id]}
+                        ]},
+                    ],
+                })
+            }
+            if(deletedConversation){
+                await Messages.deleteMany({conversation: deletedConversation._id})
+            }
             
             res.json({msg: 'Delete Success!'})
         } catch (err) {
+            console.log(err)
             return res.status(500).json({msg: err.message})
         }
     },

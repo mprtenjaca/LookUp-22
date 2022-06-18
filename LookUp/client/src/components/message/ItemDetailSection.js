@@ -9,29 +9,34 @@ const ItemDetailSection = () => {
   const history = useHistory();
 
   const { auth, messageRed } = useSelector((state) => state);
-  const [itemDetail, setItemDetail] = useState({})
+  const [itemDetail, setItemDetail] = useState({});
 
   useEffect(() => {
-
     const url = new URLSearchParams(history.location.search);
-    const urlItemId = url.get("itemId")
+    const urlItemId = url.get("itemId");
 
-    const newData = messageRed.data.find((item) => item.listing._id === urlItemId);
-    if(newData){
-        setItemDetail(newData.listing)
+    const newData = messageRed.data.find((item) => item.listing && item.listing._id === urlItemId);
+    if (newData) {
+      setItemDetail(newData.listing);
     }
-  }, [messageRed.data.listing, messageRed.data, itemDetail, id, history.location.search])
+  }, [messageRed.data.listing, messageRed.data, itemDetail, id, history.location.search]);
 
   return (
-    <div  className="item-section" >
+    <div className={`item-section ${itemDetail.isSold ? 'sold-item-section' : ''}`}>
+      {console.log(itemDetail)}
       <Link to={`/item/${itemDetail._id}`}>
-          <div className="item-section-image">
-            <img src={itemDetail.photos && itemDetail.photos[0].url} />
-          </div>
-          <div className="item-section-info">
-            <h4>{itemDetail.name}</h4>
-            <p>{itemDetail.price} {itemDetail.currency}</p>
-          </div>
+        <div className="item-section-image">
+          {
+            itemDetail.isSold ? <span className="item-sold">This item is sold</span> : <></>
+          }
+          <img src={itemDetail.photos && itemDetail.photos[0].url} className={`${itemDetail.isSold ? 'listing-sold-img' : ''}`}/>
+        </div>
+        <div className="item-section-info">
+          <h4>{itemDetail.name}</h4>
+          <p>
+            {itemDetail.price} {itemDetail.currency}
+          </p>
+        </div>
       </Link>
     </div>
   );

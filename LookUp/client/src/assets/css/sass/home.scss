@@ -16,12 +16,28 @@
 .home-container .nav-link:hover {
     transform: translateY(-1.5px);
     & span {
-        color: #13c1ac;
+        color: #FFF;
     }
     & p {
-        color: #13c1ac;
+        color: #FFF;
     }
 }
+
+.home-categorie span{
+    font-size: 60px;
+  }
+
+.home-categorie a{
+    width: 100%;
+    height: 150px;
+    color: #FFF;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #13C1AC; */
+  }
 
 
 @media only screen and (max-width: 1300px) {

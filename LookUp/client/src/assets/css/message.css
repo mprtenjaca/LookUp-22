@@ -189,16 +189,52 @@
   transform: translateY(-1.2px);
 }
 
+.sold-item-section:hover {
+  box-shadow: 0px 1px 18px -10px;
+  transform: none !important;
+}
+
 .item-section-image {
   width: 100%;
   margin: auto;
   padding: 2px;
+  text-align: center;
 }
 
 .item-section-image img {
   width: 100%;
-  border-radius: 10%;
+  border-radius: 20px;
   object-fit: cover;
+}
+
+.item-section-image span {
+  position: absolute;
+  width: 80%;
+  height: 100px;
+  top: 100px;
+  bottom: 0;
+  left: 10%;
+  right: 0;
+  font-size: 25px;
+  font-weight: 700;
+  z-index: 10;
+  padding: 2px;
+}
+
+.item-section-image .listing-sold-img {
+  opacity: 0.3;
+}
+
+.sold-listing-message {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.sold-listing-message span{
+  padding: 5px;
+  background: #bababa;
+  color: #FFF;
+  border-radius: 50px;
 }
 
 .item-section-info {
@@ -210,6 +246,15 @@
 }
 .show_hide_user_name_mobile {
   display: block;
+}
+
+.edit-message-section .item-dropdown-menu {
+  transform: translate3d(-160px, 50px, 0px) !important;
+}
+
+.edit-message-section .item-dropdown-menu {
+  min-width: 12rem !important;
+  font-size: 14px !important;
 }
 
 @media only screen and (max-width: 992px) {

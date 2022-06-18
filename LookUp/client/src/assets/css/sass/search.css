@@ -2,7 +2,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  width: 50%;
+  width: 60%;
 }
 
 .search_form .inputgroup {
@@ -29,7 +29,7 @@
   border-radius: 20px !important;
 }
 
-@media (max-width: 866px) {
+@media (max-width: 766px) {
   .search_form {
     width: 100%;
   }

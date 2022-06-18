@@ -8,6 +8,7 @@ import { logout } from "../../redux/actions/authAction";
 import { getProfileUser } from "../../redux/actions/profileAction";
 import EditProfile from "./EditProfile";
 import SavedListings from "./SavedListings";
+import SoldListings from "./SoldListings";
 
 const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
   const [userData, setUserData] = useState([]);
@@ -42,7 +43,9 @@ const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
 
     profile.listings.forEach((data) => {
       if (data._id === id) {
-        setListings(data.listings);
+        const sellingListings = data.listings.filter(listing => listing.isSold === false)
+        
+        setListings(sellingListings);
         setResult(data.result);
         setPage(data.page);
       }
@@ -89,7 +92,6 @@ const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
                       Edit profile
                     </button>
                   ) : (
-                    // <Button className="btn profile-edit-btn" onClick={() => setOnEdit(true)}>Edit Profile</Button>
                     <></>
                   )}
                   <span className="material-icons logout-btn" onClick={() => dispatch(logout())}>
@@ -132,7 +134,7 @@ const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
 
           {auth.user._id === id ? (
             <Tab eventKey="sold" title="Sold">
-              asd
+              <SoldListings auth={auth} profile={profile} id={id} dispatch={dispatch} />
             </Tab>
           ) : (
             <></>

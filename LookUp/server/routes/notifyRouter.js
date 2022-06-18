@@ -12,6 +12,8 @@ router.get('/notifies', auth, NotifyController.getNotifies)
 
 router.patch('/isReadNotify/:id', auth, NotifyController.isReadNotify)
 
-router.delete('/deleteAllNotify', auth, NotifyController.deleteAllNotifies)
+router.delete('/deleteAllNotifies', auth, NotifyController.deleteAllNotifies)
+
+router.delete('/deleteAllNotifiesForListing/:id', auth, NotifyController.deleteAllNotifiesForListing)
 
 export default router;

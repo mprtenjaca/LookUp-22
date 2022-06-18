@@ -11,6 +11,8 @@
   justify-content: start;
   align-items: center;
   padding: 5px;
+  border-radius: 10px;
+  transition: 100ms;
 }
 
 .notification-row{
@@ -21,7 +23,11 @@
 
 .notification-container .active-notification {
   background-color: #dddddd;
-  border-radius: 10px;
+}
+
+.notification-container .notification-info:hover{
+  background-color: #dddddd;
+  transition: 100ms;
 }
 
 .notification-container a:hover {

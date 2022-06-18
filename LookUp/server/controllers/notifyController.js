@@ -41,8 +41,6 @@ const notifyController = {
         }
     },
     isReadNotify: async (req, res) => {
-
-        console.log("NOTIFY PARAMS READ: ", req.params)
         try {
             const notifies = await Notifies.findOneAndUpdate({_id: req.params.id}, {
                 isRead: true
@@ -56,6 +54,15 @@ const notifyController = {
     deleteAllNotifies: async (req, res) => {
         try {
             const notifies = await Notifies.deleteMany({recipients: req.user._id})
+            
+            return res.json({notifies})
+        } catch (err) {
+            return res.status(500).json({msg: err.message})
+        }
+    },
+    deleteAllNotifiesForListing: async (req, res) => {
+        try {
+            const notifies = await Notifies.deleteMany({listing: req.params.id})
             
             return res.json({notifies})
         } catch (err) {

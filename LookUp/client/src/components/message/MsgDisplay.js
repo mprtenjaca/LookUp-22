@@ -1,24 +1,17 @@
-import React from 'react'
+import React from "react";
 
-const MsgDisplay = ({user, msg}) => {
+const MsgDisplay = ({ user, msg }) => {
   return (
     <>
-      {/* <div className='chat_title'>
-        <img src={user.avatar}/>
-      </div> */}
+      {msg.text && (
+        <div className="chat_text">
+          {msg.text}
 
-      {msg.text && <div className='chat_text'>{msg.text}
-      
-      <div className='chat_time'>
-        {new Date(msg.createdAt).toLocaleTimeString()}
-      </div>
-      </div>}
-
-      {/* <div className='chat_time'>
-        {new Date(msg.createdAt).toLocaleTimeString()}
-      </div> */}
+          <div className="chat_time">{new Date(msg.createdAt).toLocaleTimeString()}</div>
+        </div>
+      )}
     </>
-  )
-}
+  );
+};
 
-export default MsgDisplay
+export default MsgDisplay;

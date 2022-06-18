@@ -5,6 +5,10 @@
 
 @import url("../css/notifications.css");
 
+@import url("../css/item-detail.css");
+
+@import url("../css/home-page.css");
+
 * {
   padding: 0;
   letter-spacing: 0.5px;
@@ -15,7 +19,7 @@
 }
 
 .home {
-  margin-bottom: 100px;
+  margin-bottom: 150px;
 }
 
 .row {
@@ -186,7 +190,7 @@ line-height: 1.5;
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
   height: 5px;
 }
 

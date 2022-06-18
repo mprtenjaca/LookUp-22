@@ -16,35 +16,35 @@
 
 .home-container .nav-link:hover {
   -webkit-transform: translateY(-1.5px);
-          transform: translateY(-1.5px);
+  transform: translateY(-1.5px);
 }
 
 .home-container .nav-link:hover span {
-  color: #FFF;
+  color: #fff;
 }
 
 .home-container .nav-link:hover p {
-  color: #FFF;
+  color: #fff;
 }
 
-.home-categorie span {
+.home-categories span {
   font-size: 60px;
 }
 
-.home-categorie a {
+.home-container .home-categories a {
   width: 100%;
   height: 150px;
-  color: #FFF;
+  color: #fff;
   border-radius: 10px;
   margin-bottom: 10px;
   display: -ms-grid;
   display: grid;
   -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
   -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   /* background-color: #13C1AC; */
 }
 
@@ -54,4 +54,3 @@
     margin: auto;
   }
 }
-/*# sourceMappingURL=home.css.map */

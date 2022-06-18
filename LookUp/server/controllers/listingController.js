@@ -18,14 +18,19 @@ class APIfeatures {
 
 const listingController = {
   searchListings: async (req, res) => {
-    console.log(req.query);
 
     try {
-      let listings = await Posts.find({ 
-        $or: [
-          { name: { $regex: new RegExp(req.query.keywords, "i") } }, 
-          { description: { $regex: new RegExp(req.query.keywords, "i") } 
-        }] }).limit(15);
+      let listings = await Posts.find({
+        
+        $and: [
+          {isSold: false},
+          {$or: [
+            { name: 
+              { $regex: new RegExp(req.query.keywords, "i") } }, 
+              { description: { $regex: new RegExp(req.query.keywords, "i") } 
+            }]}
+        ]
+      }).limit(15);
 
       // if(req.query.conditions){
       //   const filteredList = listings.filter((item) => {
@@ -147,7 +152,11 @@ const listingController = {
   },
   getCategoryListings: async (req, res) => {
     try {
-      const listings = await Posts.find({ category: req.params.id }).populate("user", "avatar firstName lastName");
+      const listings = await Posts.find(
+        {$and: [
+          { category: req.params.id }, 
+          { isSold: false }
+        ]}).populate("user", "avatar firstName lastName");
 
       if (listings.length === 0) {
         return res.status(200).json({ msg: "No listings in this category" });
@@ -158,50 +167,6 @@ const listingController = {
         result: listings.length,
         listings,
       });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  likePost: async (req, res) => {
-    try {
-      const post = await Posts.find({
-        _id: req.params.id,
-        likes: req.user._id,
-      });
-      if (post.length > 0) {
-        return res.status(400).json({ msg: "You liked this post." });
-      }
-      const like = await Posts.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          $push: { likes: req.user._id },
-        },
-        { new: true }
-      );
-
-      if (!like) {
-        return res.status(400).json({ msg: "This post does not exist." });
-      }
-
-      res.json({ msg: "Liked Post!" });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  unLikePost: async (req, res) => {
-    try {
-      const like = await Posts.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          $pull: { likes: req.user._id },
-        },
-        { new: true }
-      );
-
-      if (!like) {
-        return res.status(400).json({ msg: "This post does not exist." });
-      }
-      res.json({ msg: "UnLiked Post!" });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -234,32 +199,12 @@ const listingController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getPostsDicover: async (req, res) => {
-    try {
-      const newArr = [...req.user.following, req.user._id];
-
-      const num = req.query.num || 9;
-
-      const posts = await Posts.aggregate([{ $match: { user: { $nin: newArr } } }, { $sample: { size: Number(num) } }]);
-
-      return res.json({
-        msg: "Success!",
-        result: posts.length,
-        posts,
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
   deleteListing: async (req, res) => {
     try {
       const deletedListing = await Posts.findOneAndDelete({
         _id: req.params.id,
         user: req.user._id,
       });
-
-      console.log("DELETED: ", deletedListing)
-      // await Comments.deleteMany({ _id: { $in: deletedListing.comments } });
 
       res.json({
         msg: "Deleted Post!",
@@ -315,10 +260,27 @@ const listingController = {
       return res.status(500).json({ msg: err.message });
     }
   },
-  getSavedListings: async (req, res) => {
+  updateListingStatus: async (req, res) => {
+    try {
+      const updatedListing = await Posts
+      .findOneAndUpdate({ _id: req.params.id }, 
+        [{$set: {isSold: {$eq:[false, "$isSold"]}}}], 
+        { new: true })
+      .populate("user", "avatar firstName lastName");
+      
+      if (!updatedListing) {
+        return res.status(400).json({ msg: "This listing does not exist." });
+      }
 
-    console.log(req.user)
-    console.log(req.query)
+      res.json({
+        msg: `Updated listing status to ${updatedListing.isSold ? "sold" : "selling"}`,
+        updatedListing,
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+  getSavedListings: async (req, res) => {
     try {
       const features = new APIfeatures(
         Posts.find({
@@ -333,6 +295,25 @@ const listingController = {
         savedListings,
         result: savedListings.length,
       });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  deleteSavedListing: async (req, res) => {
+    try {
+      const deleted = await Users.updateMany(
+        { saved: req.params.id },
+        {
+          $pull: { saved: req.params.id },
+        },
+        { new: true }
+      );
+
+      if (!deleted) {
+        return res.status(400).json({ msg: "Error while trying to remove all saved listings with ID: " + req.params.id });
+      }
+      res.json({ msg: "Removed all saved listings with ID: " + req.params.id });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }

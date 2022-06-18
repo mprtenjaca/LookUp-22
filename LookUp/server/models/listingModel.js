@@ -15,6 +15,7 @@ const postSchema = new mongoose.Schema({
         default: '',
         trim: true,
     },
+    isSold: {type: Boolean, default: false},
     category: {type: String, default: '', trim: true,},
     subCategory: {type: String, default: '', trim: true,},
     condition: {type: String, default: '', trim: true,},

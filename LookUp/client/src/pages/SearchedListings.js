@@ -248,8 +248,6 @@ const SearchedListings = (props) => {
 
   return (
     <div className="card-container">
-      {console.log(sliderPriceValues)}
-
       <div className="search-filter">
         <ul>
           <li>

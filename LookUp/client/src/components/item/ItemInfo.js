@@ -4,22 +4,24 @@ import moment from "moment";
 
 import "../../assets/css/item-detail.css";
 import { useHistory, useLocation, useParams } from "react-router";
-import { MESS_TYPES } from "../../redux/actions/messageAction";
+import { deleteConversation, MESS_TYPES } from "../../redux/actions/messageAction";
 import { useDispatch, useSelector } from "react-redux";
 
-import UserCard from "../user/UserCard";
+import { socket } from "../../redux/socket";
 import { categories } from "../../utils/categoriesConstants";
 import { Link } from "react-router-dom";
-import { saveListing, unSaveListing } from "../../redux/actions/listingAction";
+import { deleteListing, deleteSavedListing, updateListingStatus, saveListing, unSaveListing } from "../../redux/actions/listingAction";
+import { deleteAllNotifiesForListing } from "../../redux/actions/notifyAction";
 
 const ItemInfo = ({ item, user }) => {
-  const { auth } = useSelector((state) => state);
+  const { auth, alert, detailItem } = useSelector((state) => state);
   const { id } = useParams();
 
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
 
+  const [sold, setSold] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveSafeLoad, setSaveSafeLoad] = useState(false);
 
@@ -27,6 +29,13 @@ const ItemInfo = ({ item, user }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+
+  useEffect(() => {
+      const isSoldListing = item.some(listing => listing.isSold === true)
+      setSold(isSoldListing)
+      
+  }, [item, detailItem]);
 
   useEffect(() => {
     if (auth.user.saved.find((savedListingID) => savedListingID === id)) {
@@ -37,6 +46,7 @@ const ItemInfo = ({ item, user }) => {
   }, [auth.user.saved]);
 
   const handleChat = (itemUser, itemDetail) => (e) => {
+    console.log(itemUser)
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...itemUser, text: "", listing: itemDetail } });
     return history.push("/message/" + itemUser._id + "?itemId=" + itemDetail._id);
   };
@@ -53,13 +63,23 @@ const ItemInfo = ({ item, user }) => {
     setSaveSafeLoad(false);
   };
 
+  const handleSellListing = (itemDetail) => (e) => {
+    dispatch(updateListingStatus({listing: itemDetail, auth}))
+    !alert.loading && window.location.reload()
+
+  }
+
   const handleEditListing = (itemDetail) => (e) => {
     history.push("/item/edit/" + itemDetail._id);
   };
 
   const handleDeleteListing = (itemDetail) => (e) => {
-    console.log("OBRISAN")
+    dispatch(deleteListing({listing: itemDetail, auth, socket}))
+    dispatch(deleteConversation({auth, id: auth.user._id, itemID: itemDetail._id}))
+    dispatch(deleteAllNotifiesForListing({auth, listingID: id}))
+    dispatch(deleteSavedListing({listing: itemDetail, auth}))
     handleClose()
+    history.push('/profile/' + auth.user._id)
   };
 
   return (
@@ -101,7 +121,7 @@ const ItemInfo = ({ item, user }) => {
                   </>
                 ) : (
                   <>
-                    <Col md={5} sm={3} xs={3} className="edit-item-btn">
+                    <Col md={5} sm={3} xs={3} className="edit-item-btn item-info-section">
                       <ul className="navbar-nav flex-row disable-select">
                         <li className="nav-item dropdown">
                           <span className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -111,6 +131,9 @@ const ItemInfo = ({ item, user }) => {
                           <div className="dropdown-menu item-dropdown-menu" aria-labelledby="navbarDropdown">
                             <div className="dropdown-menu-item" onClick={handleEditListing(itemDetail)}>
                               <span className="material-icons-outlined nav-item dropdown">edit</span>Edit
+                            </div>
+                            <div className="dropdown-menu-item" onClick={handleSellListing(itemDetail)}>
+                              <span className="material-icons-outlined nav-item dropdown">sell</span>Mark {sold ? "unsold" : "sold"}
                             </div>
                             <div className="dropdown-menu-item" onClick={handleShow}>
                               <span className="material-icons-outlined nav-item dropdown">delete</span>Delete
@@ -127,8 +150,11 @@ const ItemInfo = ({ item, user }) => {
                 <Col md={12} className="item-image">
                   <Carousel interval={null}>
                     {itemDetail.photos.map((photo, index) => (
-                      <CarouselItem key={index}>
-                        <img src={photo.url} />
+                      <CarouselItem key={index} className="item-info-carousel">
+                        {
+                          itemDetail.isSold ? <span>This item is sold</span> : <></>
+                        }
+                        <img src={photo.url} className={`${itemDetail.isSold ? 'listing-sold-img' : ''}`}/>
                       </CarouselItem>
                     ))}
                   </Carousel>

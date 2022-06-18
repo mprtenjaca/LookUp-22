@@ -64,25 +64,26 @@ export const getConversations = ({auth, page = 1}) => async (dispatch) => {
     }
 }
 
-export const getMessages = ({auth, id, itemID, page = 1}) => async (dispatch) => {
+export const getMessages = ({auth, id, itemID, listing, page = 1}) => async (dispatch) => {
     try {
         const res = await getDataAPI(`message/${id}?itemId=${itemID}&limit=${page * 25}`, auth.token)
 
         const newData = {...res.data, messages: res.data.messages.reverse()}
-        const listingId = newData ? newData.messages[0].listing : null
-
+        const listingId = newData.messages.length > 0 ? newData.messages[0].listing : listing
+        
         dispatch({type: MESS_TYPES.GET_MESSAGES, payload: {...newData, _id: id, page, listing: listingId}})
     } catch (err) {
-        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
+        console.log(err)
+        dispatch({type: GLOBALTYPES.ALERT, payload: {error: err}})
     }
 }
 
-export const loadMoreMessages = ({auth, id, itemID, page = 1}) => async (dispatch) => {
+export const loadMoreMessages = ({auth, id, itemID, listing, page = 1}) => async (dispatch) => {
     try {
         const res = await getDataAPI(`message/${id}?itemId=${itemID}&limit=${page * 25}`, auth.token)
 
         const newData = {...res.data, messages: res.data.messages.reverse()}
-        const listingId = newData ? newData.messages[0].listing : null
+        const listingId = newData.messages.length > 0 ? newData.messages[0].listing : listing
         
         dispatch({type: MESS_TYPES.UPDATE_MESSAGES, payload: {...newData, _id: id, page, listing: listingId}})
     } catch (err) {
@@ -101,10 +102,10 @@ export const deleteMessages = ({msg, data, auth}) => async (dispatch) => {
     }
 }
 
-export const deleteConversation = ({auth, id}) => async (dispatch) => {
-    dispatch({type: MESS_TYPES.DELETE_CONVERSATION, payload: id})
+export const deleteConversation = ({auth, id, itemID}) => async (dispatch) => {
+    dispatch({type: MESS_TYPES.DELETE_CONVERSATION, payload: {userID: id, itemID}})
     try {
-        await deleteDataAPI(`conversation/${id}`, auth.token)
+        await deleteDataAPI(`conversation/${id}?itemId=${itemID}`, auth.token)
     } catch (err) {
         dispatch({type: GLOBALTYPES.ALERT, payload: {error: err.response.data.msg}})
     }

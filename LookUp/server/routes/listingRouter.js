@@ -17,17 +17,15 @@ router.route('/listing/:id')
 
 router.route('/category/:id').get(auth, ListingController.getCategoryListings)
 
-router.patch('/listing/:id/like', auth, ListingController.likePost)
-
-router.patch('/listing/:id/unlike', auth, ListingController.unLikePost)
-
 router.get('/user_listings/:id', auth, ListingController.getUserPosts)
-
-router.get('/listing_discover', auth, ListingController.getPostsDicover)
 
 router.patch('/saveListing/:id', auth, ListingController.savePost)
 
 router.patch('/unSaveListing/:id', auth, ListingController.unSavePost)
+
+router.patch('/updateListingStatus/:id', auth, ListingController.updateListingStatus)
+
+router.patch('/deleteSavedListing/:id', auth, ListingController.deleteSavedListing)
 
 router.get('/getSavedListings', auth, ListingController.getSavedListings)
 
