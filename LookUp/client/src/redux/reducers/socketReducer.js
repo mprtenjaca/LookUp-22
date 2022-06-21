@@ -7,7 +7,6 @@ const initialState = {
 const socketReducer = (state = [], action) => {
     switch (action.type){
         case GLOBALTYPES.SOCKET:
-            console.log(action.payload)
             return action.payload
         default:
             return state;

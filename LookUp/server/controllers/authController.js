@@ -5,13 +5,13 @@ import jwt from "jsonwebtoken";
 const authController = {
   register: async (req, res) => {
     try {
-      const { firstName, lastName, username, email, oib, contactPhone, street, streetNumber, city, postalCode, county, password } = req.body;
+      const { firstName, lastName, username, email, contactPhone, street, streetNumber, city, postalCode, county, password } = req.body;
 
       let newUserName = username.toLowerCase().replace(/ /g, "");
 
       const user_name = await Users.findOne({ username: newUserName });
       if (user_name) {
-        return res.status(400).json({ msg: "This user name already exists." });
+        return res.status(400).json({ msg: "This username already exists." });
       }
 
       const user_email = await Users.findOne({ email });
@@ -43,7 +43,6 @@ const authController = {
         username: newUserName,
         email,
         password: passwordHash,
-        oib,
         contactPhone,
         street,
         streetNumber,
@@ -81,7 +80,6 @@ const authController = {
       const { email, password } = req.body;
 
       const user = await Users.findOne({ email });
-      //.populate("followers following", "avatar username fullname followers following")
 
       if (!user) {
         return res.status(400).json({ msg: "This email does not exist." });
@@ -158,7 +156,6 @@ const authController = {
         if (err) return res.status(400).json({ msg: "Please login now." });
 
         const user = await Users.findById(result.id).select("-password");
-        // .populate('followers following', 'avatar username fullname followers following')
 
         if (!user) return res.status(400).json({ msg: "This does not exist." });
 

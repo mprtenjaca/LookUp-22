@@ -21,25 +21,9 @@ const MessageController = {
     createMessage: async (req, res) => {
         try {
             const { sender, recipient, listing, text } = req.body
-            console.log("sender: ", sender)
-            console.log("recipient: ", recipient)
-            console.log("listing: ", listing._id)
             if(!recipient || (!text.trim())){
                 return;
             }
-
-            const test = await Conversations.find({
-                $and: [
-                    {listing: listing._id},
-                    {$or: [
-                        {recipients: [sender, recipient]},
-                        {recipients: [recipient, sender]}
-                    ]},
-                ]
-                
-            })
-
-            // console.log("CONVO FIND: ", test)
 
             const newConversation = await Conversations.findOneAndUpdate({
                 $and: [
@@ -56,8 +40,6 @@ const MessageController = {
                 text
             }, { new: true, upsert: true })
 
-            // console.log("NEW CONVO: ", newConversation)
-
             const newMessage = new Messages({
                 conversation: newConversation._id,
                 sender,
@@ -65,8 +47,6 @@ const MessageController = {
                 listing,
                 text
             })
-
-            console.log("NEW MESSAGE: ", newMessage)
 
             await newMessage.save()
 
@@ -85,9 +65,7 @@ const MessageController = {
             const conversations = await features.query.sort('-updatedAt')
             .populate('recipients', 'avatar username firstName lastName')
             .populate('listing', 'name photos category price currency isSold user')
-
-            // console.log("CONVOS: ", conversations)
-
+            
             res.json({
                 conversations,
                 result: conversations.length

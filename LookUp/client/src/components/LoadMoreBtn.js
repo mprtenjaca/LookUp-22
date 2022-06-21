@@ -1,0 +1,16 @@
+import React from "react";
+
+const LoadMoreBtn = ({ result, page, load, handleLoadMore }) => {
+  return (
+    <>
+      {result < 9 * (page - 1) ? ""
+        : !load && (
+            <button className="load-more-btn mx-auto d-block" onClick={handleLoadMore}>
+              Load more
+            </button>
+          )}
+    </>
+  );
+};
+
+export default LoadMoreBtn;

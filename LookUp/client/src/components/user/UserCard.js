@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 const UserCard = ({ user, showMsg }) => {
   return (
     <>
-    {/* {console.log(user)} */}
       <div className="message_user user-card">
         <div className="d-flex p-2 align-items-center justify-content-between w-100 undefined">
           <div>

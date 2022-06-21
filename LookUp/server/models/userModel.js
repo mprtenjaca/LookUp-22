@@ -26,9 +26,10 @@ const userSchema = new mongoose.Schema({
         trim: true,
         unique: true
     },
-    oib: {
-        type: String
-    },
+    // oib: {
+    //     type: String,
+    //     default: ''
+    // },
     street: {
         type: String,
         default: ''

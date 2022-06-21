@@ -13,12 +13,13 @@ const EditProfile = ({ setOnEdit }) => {
     lastName: "",
     username: "",
     email: "",
-    oib: "",
+    // oib: "",
     street: "",
     streetNumber: "",
     postalCode: "",
     county: "",
     city: "",
+    contactPhone: ""
   };
   const [userData, setUserData] = useState(initState);
   const {
@@ -26,7 +27,7 @@ const EditProfile = ({ setOnEdit }) => {
     lastName,
     username,
     email,
-    oib,
+    // oib,
     street,
     streetNumber,
     postalCode,
@@ -164,14 +165,14 @@ const EditProfile = ({ setOnEdit }) => {
               </FormGroup>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col md={12}>
               <FormGroup>
                 <label>OIB</label>
                 <input name="oib" value={oib} onChange={handleInput} />
               </FormGroup>
             </Col>
-          </Row>
+          </Row> */}
 
           <Row>
             <Col md={6}>

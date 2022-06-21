@@ -1,0 +1,12 @@
+.load-more-btn{
+    border: none;
+    background-color: #13c1ac;
+    padding: 5px;
+    border-radius: 50px;
+    color: #FFF;
+    transition: 200ms;
+}
+.load-more-btn:hover{
+    background-color: #0f9989;
+    transition: 200ms;
+}

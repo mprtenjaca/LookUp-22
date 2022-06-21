@@ -1,67 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Card, Col, Container, Dropdown, DropdownButton, Row, Tab, Tabs } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation, useParams } from "react-router";
 
 import "../../assets/css/profile-card.css";
 import { logout } from "../../redux/actions/authAction";
-import { getProfileUser } from "../../redux/actions/profileAction";
+import { LISTING_TYPES } from "../../redux/actions/listingAction";
+import { getProfileUser, PROFILE_TYPES } from "../../redux/actions/profileAction";
+import { getDataAPI } from "../../utils/fetchData";
+import LoadMoreBtn from "../LoadMoreBtn";
 import EditProfile from "./EditProfile";
 import SavedListings from "./SavedListings";
 import SoldListings from "./SoldListings";
 
-const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
+const ProfileInfo = ({ id, auth, profile, listingRed, alert, dispatch }) => {
   const [userData, setUserData] = useState([]);
   const [listings, setListings] = useState([]);
   const [result, setResult] = useState(9);
   const [page, setPage] = useState(0);
   const [load, setLoad] = useState(false);
   const [onEdit, setOnEdit] = useState(false);
+  const pageEnd = useRef();
+  
 
   const history = useHistory();
   const location = useLocation();
 
   useEffect(() => {
-    // Reload page when listing is updated in full
-    if (location.state && location.state.from && location.state.from.includes("/item/edit/")) {
-      if(!alert.loading){
-        if (!window.location.hash) {
-            window.location = window.location + "#loaded";
-            window.location.reload();
-        }
-      }
-    }
-  }, [location, alert]);
-
-  useEffect(() => {
     if (id === auth.user._id) {
       setUserData([auth.user]);
+      const sellingListings = listingRed.listings.filter(listing => listing.isSold === false)
+      setListings(sellingListings);
+      setResult(listingRed.result);
+      setPage(listingRed.page);
     } else {
       const newData = profile.users.filter((user) => user._id === id);
       setUserData(newData);
+
+      profile.listings.forEach((data) => {
+        if (data._id === id) {
+          const sellingListings = data.listings.filter(listing => listing.isSold === false)
+    
+          setListings(sellingListings);
+          setResult(data.result);
+          setPage(data.page);
+        }
+      });
+
     }
 
-    profile.listings.forEach((data) => {
-      if (data._id === id) {
-        const sellingListings = data.listings.filter(listing => listing.isSold === false)
-        
-        setListings(sellingListings);
-        setResult(data.result);
-        setPage(data.page);
-      }
-    });
-  }, [id, auth.user, dispatch, profile.users, profile.listings]);
+    
+  }, [id, auth.user, dispatch, profile.users, profile.listings, listingRed.listings]);
 
   const handleListingDetails = (listingId) => (e) => {
     const link = "/item/" + listingId;
     history.push(link);
   };
 
+  const handleLoadMore = async () => {
+    setLoad(true)
+    const res = await getDataAPI(`user_listings/${id}?limit=${page * 9}`, auth.token)
+    const newData = {...res.data, page: page + 1, _id: id}
+    if(auth.user._id === id){
+      dispatch({type: LISTING_TYPES.UPDATE_LISTINGS, payload: newData})
+    }else{
+      dispatch({type: PROFILE_TYPES.UPDATE_LISTING, payload: newData})
+    }
+    setLoad(false)
+  }
+
   return (
     <div className="card-container">
       <div className="profile-container">
-        {userData.map((user) => (
-          <Container fluid>
+        {userData.map((user, index) => (
+          <Container fluid key={index}>
             <Row className="profile" key={user._id}>
               <Col lg={6} md={6} sm={12}>
                 <div className="profile-data">
@@ -129,12 +141,13 @@ const ProfileInfo = ({ id, auth, profile, alert, dispatch }) => {
                   </Card>
                 </Col>
               ))}
+              <LoadMoreBtn result={result} page={page} load={load} handleLoadMore={handleLoadMore}/>
             </Row>
           </Tab>
 
           {auth.user._id === id ? (
             <Tab eventKey="sold" title="Sold">
-              <SoldListings auth={auth} profile={profile} id={id} dispatch={dispatch} />
+              <SoldListings auth={auth} profile={profile} listings={listingRed} id={id} dispatch={dispatch} />
             </Tab>
           ) : (
             <></>

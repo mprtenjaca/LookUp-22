@@ -33,9 +33,7 @@ export const login = (data) => async (dispatch) => {
 }
 
 export const test = ({socket}) => async (dispatch) => {
-    console.log(socket)
     dispatch({type: GLOBALTYPES.SOCKET, payload: socket})
-
 } 
 
 export const refreshToken = () => async (dispatch) => {

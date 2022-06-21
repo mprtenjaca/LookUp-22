@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { useHistory } from "react-router";
 
-const SoldListings = ({ auth, profile, id, dispatch }) => {
+const SoldListings = ({ auth, profile, listings, id, dispatch }) => {
   const history = useHistory()
 
   const [soldListings, setSoldListings] = useState([]);
@@ -10,16 +10,10 @@ const SoldListings = ({ auth, profile, id, dispatch }) => {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    profile.listings.forEach((data) => {
-      if (data._id === id) {
-        const sellingListings = data.listings.filter((listing) => listing.isSold === true);
-        
-        setSoldListings(sellingListings);
-        setResult(data.result);
-        setPage(data.page);
-      }
-    });
-  }, [id, auth.user, dispatch, profile.listings]);
+    const sellingListings = listings.listings.filter((listing) => listing.isSold === true);
+    setSoldListings(sellingListings);
+    setResult(listings.result);
+  }, [id, auth.user, dispatch, listings]);
 
   const handleListingDetails = (listingId) => (e) => {
     const link = "/item/" + listingId;

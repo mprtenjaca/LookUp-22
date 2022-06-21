@@ -48,7 +48,7 @@ const Home = () => {
 
         <Row className="home-categories text-center">
             {categories.map((link, index) => (
-              <Col lg={3} md={3} sm={4} xs={6}>
+              <Col lg={3} md={3} sm={4} xs={6} key={index}>
                   <Link className="nav-link" to={"/category/" + link.path} style={{backgroundColor: generateColor()}}>
                     <span className="material-icons-outlined">{link.icon}</span>
                     <p>{link.heading}</p>

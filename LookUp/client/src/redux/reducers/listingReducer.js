@@ -1,11 +1,12 @@
 import { LISTING_TYPES } from '../actions/listingAction'
-import { EditData, DeleteData } from '../types/globalTypes'
+import { EditData, DeleteData, UpdateUserListings } from '../types/globalTypes'
 
 const initialState = {
     loading: false,
     listings: [],
     result: 0,
-    page: 2
+    page: 2,
+    _id: ''
 }
 
 const listingReducer = (state = initialState, action) => {
@@ -25,12 +26,21 @@ const listingReducer = (state = initialState, action) => {
                 ...state,
                 listings: action.payload.listings,
                 result: action.payload.result,
-                page: action.payload.page
+                page: action.payload.page,
+                _id: action.payload._id
             };
         case LISTING_TYPES.UPDATE_LISTING:
             return {
                 ...state,
                 listings: EditData(state.listings, action.payload._id, action.payload)
+            };
+        case LISTING_TYPES.UPDATE_LISTINGS:
+            return {
+                ...state,
+                listings: action.payload.listings,
+                result: action.payload.result,
+                page: action.payload.page,
+                _id: action.payload._id
             };
         case LISTING_TYPES.DELETE_LISTING:
             return {

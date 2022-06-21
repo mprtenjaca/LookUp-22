@@ -140,8 +140,6 @@ const MessagesSection = () => {
       createdAt: new Date().toISOString(),
     };
 
-    console.log(msg.listing)
-
     setData([...data, msg]);
     dispatch(addMessage({ msg, auth, socket }));
     setText("");

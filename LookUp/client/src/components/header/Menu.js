@@ -50,7 +50,7 @@ const Menu = () => {
         ))}
         <li className={`nav-item px-2 ${isActive("/message")}`}>
           <Link className="nav-link" to={"/message"}>
-            <span className="material-icons-outlined">inbox</span>
+            <span className="material-icons-outlined">email</span>
             {notify.data.filter((item) => item.type === "message" && item.isRead === false).length !== 0 ? (
               <span className="notifications-count">{notify.data.filter((item) => item.type === "message" && item.isRead === false).length}</span>
             ) : (

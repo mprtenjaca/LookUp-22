@@ -46,7 +46,6 @@ const ItemInfo = ({ item, user }) => {
   }, [auth.user.saved]);
 
   const handleChat = (itemUser, itemDetail) => (e) => {
-    console.log(itemUser)
     dispatch({ type: MESS_TYPES.ADD_USER, payload: { ...itemUser, text: "", listing: itemDetail } });
     return history.push("/message/" + itemUser._id + "?itemId=" + itemDetail._id);
   };
@@ -65,7 +64,7 @@ const ItemInfo = ({ item, user }) => {
 
   const handleSellListing = (itemDetail) => (e) => {
     dispatch(updateListingStatus({listing: itemDetail, auth}))
-    !alert.loading && window.location.reload()
+    // !alert.loading && window.location.reload()
 
   }
 

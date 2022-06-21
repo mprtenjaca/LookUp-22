@@ -11,10 +11,14 @@ import { checkImage, imageUpload } from "../utils/imageUpload";
 import { createListing } from "../redux/actions/listingAction";
 import { validateListing } from "../utils/validate";
 import { socket } from "../redux/socket";
+import { useHistory } from "react-router";
 
 const NewListing = () => {
-  const dispatch = useDispatch();
   const { auth, alert } = useSelector((state) => state);
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+
 
   const initialState = {
     name: "",
@@ -105,6 +109,7 @@ const NewListing = () => {
 
     dispatch(createListing({ productData, auth, socket }));
     setProductData(initialState)
+    history.push("/profile/" + auth.user._id)
   };
 
   return (

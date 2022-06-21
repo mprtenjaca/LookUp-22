@@ -14,7 +14,6 @@ const notifyReducer = (state = initialState, action) => {
                 data: action.payload
             };
         case NOTIFY_TYPES.CREATE_NOTIFY:
-            console.log("NOTIFY REDUCER CREATE")
             return {
                 ...state,
                 data: [action.payload, ...state.data]

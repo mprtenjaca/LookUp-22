@@ -15,7 +15,7 @@ const Register = () => {
         lastName: '', 
         username: '', 
         email: '', 
-        oib: null,
+        // oib: null,
         contactPhone: '',
         street: '', 
         streetNumber: '', 
@@ -26,7 +26,7 @@ const Register = () => {
         cf_password: ''
     }
     const [userData, setUserData] = useState(initialState)
-    const { firstName, lastName, username, email, oib, contactPhone, street, streetNumber, city, postalCode, county, password, cf_password } = userData
+    const { firstName, lastName, username, email, contactPhone, street, streetNumber, city, postalCode, county, password, cf_password } = userData
 
     const [typePass, setTypePass] = useState(false)
     const [typeCfPass, setTypeCfPass] = useState(false)
@@ -41,6 +41,7 @@ const Register = () => {
     const handleChangeInput = e => {
         const { name, value } = e.target
         setUserData({...userData, [name]:value})
+        
     }
 
     const handleSubmit = e => {

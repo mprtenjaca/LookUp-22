@@ -32,7 +32,6 @@ const userController = {
             if(!city) return res.status(400).json({msg: "Please add city."})
             if(!postalCode) return res.status(400).json({msg: "Please add psotal code."})
 
-            console.log("TEST: ", req.body)
             await Users.findOneAndUpdate({_id: req.user._id}, {
                 avatar, firstName, lastName, username, email, oib, street, streetNumber, postalCode, county, city, contactPhone
             })

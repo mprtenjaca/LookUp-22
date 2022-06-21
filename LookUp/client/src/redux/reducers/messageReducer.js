@@ -12,8 +12,6 @@ const initialState = {
 const messageReducer = (state = initialState, action) => {
   switch (action.type) {
     case MESS_TYPES.ADD_USER:
-      console.log(action.payload.listing._id)
-      console.log(state.users)
       if (state.users.every((item) => item.listing._id !== action.payload.listing._id)) {
         return {
           ...state,

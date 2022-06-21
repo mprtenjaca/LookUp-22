@@ -42,7 +42,6 @@ const ItemCard = ({ user, item, showMsg }) => {
 
   return (
     <>
-    {/* {console.log(item)} */}
       <div className={`message_user user-card ${isActive()} `}>
         <div className="p-2 align-items-center justify-content-between w-100 undefined">
           <div className="user-card-wrapper">

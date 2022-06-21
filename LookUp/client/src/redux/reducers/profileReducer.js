@@ -1,5 +1,5 @@
 import { PROFILE_TYPES } from '../actions/profileAction.js'
-import { EditData } from '../types/globalTypes'
+import { AddData, EditData, UpdateUserListings } from '../types/globalTypes'
 
 const initialState = {
     loading: false,

@@ -10,8 +10,6 @@ const EditData = (data, id, call) => {
 const addUser = (userId, socketId) => {
     !users.some(user => user.id === userId) && 
     users.push({id: userId, socketId: socketId})
-
-    console.log("USERS: ", users)
 }
 
 const SocketServer = (socket) => {
@@ -34,10 +32,8 @@ const SocketServer = (socket) => {
     // Notification
     socket.on('createNotify', msg => {
         const client = users.find(user => msg.recipients.includes(user.id))
-
-        console.log(msg.recipients.includes(msg.user.id))
         if(msg.recipients.includes(msg.user.id)){
-            socket.emit('test', msg)
+            socket.emit('createNotifyToClient', msg)
         }else{
             client && socket.to(`${client.socketId}`).emit('createNotifyToClient', msg)
         }

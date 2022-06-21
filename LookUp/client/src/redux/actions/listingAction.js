@@ -3,6 +3,7 @@ import { imageUpload } from '../../utils/imageUpload'
 import { postDataAPI, getDataAPI, patchDataAPI, deleteDataAPI } from '../../utils/fetchData'
 import { validateListing } from '../../utils/validate'
 import { createNotify, removeNotify } from './notifyAction'
+import { PROFILE_TYPES } from './profileAction'
 // import { createNotify, removeNotify } from './notifyAction'
 
 export const LISTING_TYPES = {
@@ -10,6 +11,7 @@ export const LISTING_TYPES = {
     LOADING_LISTING: 'LOADING_LISTING',
     GET_LISTINGS: 'GET_LISTINGS',
     UPDATE_LISTING: 'UPDATE_LISTING',
+    UPDATE_LISTINGS: 'UPDATE_LISTINGS',
     GET_LISTING: 'GET_LISTING',
     DELETE_LISTING: 'DELETE_LISTING'
 }
@@ -109,8 +111,7 @@ export const getListing = ({detailItem, id, auth}) => async (dispatch) => {
     if(detailItem.every(item => item._id !== id)){
         try {
             const res = await getDataAPI(`listing/${id}`, auth.token)
-
-            console.log(res.data)
+            
             dispatch({ type: LISTING_TYPES.GET_LISTING, payload: res.data.item })
         } catch (err) {
             dispatch({

@@ -23,7 +23,6 @@ const ItemDetailSection = () => {
 
   return (
     <div className={`item-section ${itemDetail.isSold ? 'sold-item-section' : ''}`}>
-      {console.log(itemDetail)}
       <Link to={`/item/${itemDetail._id}`}>
         <div className="item-section-image">
           {

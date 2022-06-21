@@ -14,6 +14,14 @@ class APIfeatures {
     this.query = this.query.skip(skip).limit(limit);
     return this;
   }
+
+  paginatingListings() {
+    const page = this.queryString.page * 1 || 1;
+    const limit = this.queryString.limit * 1 || 9;
+    const skip = (page - 1) * limit;
+    this.query = this.query.skip(skip).limit(limit);
+    return this;
+  }
 }
 
 const listingController = {
@@ -53,8 +61,6 @@ const listingController = {
       const { photos, name, description, category, subCategory, condition, currency, price, city, postalCode, user } = req.body.productData;
       const { images } = req.body;
 
-      console.log(req.body);
-
       if (images.length === 0) {
         return res.status(400).json({ msg: "Please add your photo." });
       }
@@ -72,8 +78,6 @@ const listingController = {
         postalCode: postalCode,
         user,
       });
-
-      console.log("NEW LISTING: " + newListing);
 
       await newListing.save();
 
@@ -173,7 +177,7 @@ const listingController = {
   },
   getUserPosts: async (req, res) => {
     try {
-      const features = new APIfeatures(Posts.find({ user: req.params.id }), req.query).paginating();
+      const features = new APIfeatures(Posts.find({ user: req.params.id }), req.query).paginatingListings();
       const listings = await features.query.sort("-createdAt");
 
       res.json({
